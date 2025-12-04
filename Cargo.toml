@@ -1,0 +1,9 @@
+[package]
+name = "semantic_weapons"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+candle-core = "0.9.1"
+csgrs = "0.20.1"
+obj = "0.10.2"
