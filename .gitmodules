@@ -1,3 +1,0 @@
-[submodule "Llama-3.2-3B-Instruct"]
-	path = Llama-3.2-3B-Instruct
-	url = git@hf.co:meta-llama/Llama-3.2-3B-Instruct

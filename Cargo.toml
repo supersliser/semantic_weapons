@@ -5,5 +5,9 @@ edition = "2024"
 
 [dependencies]
 candle-core = "0.9.1"
+candle-nn = "0.9.1"
+candle-transformers = "0.9.1"
 csgrs = "0.20.1"
+hf-hub = "0.4.3"
 obj = "0.10.2"
+tokio = "1.48.0"
