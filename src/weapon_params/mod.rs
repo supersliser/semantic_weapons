@@ -1,7 +1,7 @@
 pub struct WeaponParams {
     pub blade_length: BladeLength,
     pub blade_width: BladeWidth,
-    pub blade_type: BladeType,
+    pub blade_curvature: BladeCurvature,
     pub blade_count: u8,
     pub has_guard: bool,
     pub handle_material: WeaponMaterial,
@@ -23,8 +23,11 @@ pub enum BladeWidth {
     Wide,
 }
 
-pub enum BladeType {
-
+pub enum BladeCurvature {
+    Straight,
+    Curved,
+    RightAngled,
+    Circular,
 }
 
 pub enum WeaponMaterial {

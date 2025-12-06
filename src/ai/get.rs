@@ -16,3 +16,19 @@ pub fn get_model() -> PathBuf {
     println!("Model located at: {:?}", path);
     path
 }
+
+pub fn get_tokenizer() -> PathBuf {
+    let api = Api::new().expect("Failed to create API client");
+
+    let repo = api.repo(Repo::new(
+        "huggingface/Llama-3.2-1B-Instruct-GGUF".to_string(),
+        hf_hub::RepoType::Model,
+    ));
+
+    let path = repo
+        .get("tokenizer.model")
+        .expect("Failed to download tokenizer");
+
+    println!("Tokenizer located at: {:?}", path);
+    path
+}
