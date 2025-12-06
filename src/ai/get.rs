@@ -1,16 +1,16 @@
-use hf_hub::{Repo, api::sync::Api};
+use hf_hub::{Repo, api::sync::{Api, ApiBuilder}};
 use std::path::PathBuf;
 
 pub fn get_model() -> PathBuf {
-    let api = Api::new().expect("Failed to create API client");
+    let api = get_auth();
 
     let repo = api.repo(Repo::new(
-        "huggingface/Llama-3.2-1B-Instruct-GGUF".to_string(),
+        "bartowski/Llama-3.2-1B-Instruct-GGUF".to_string(),
         hf_hub::RepoType::Model,
     ));
 
     let path = repo
-        .get("llama-3.2-1b-instruct-q4_k_m.gguf")
+        .get("Llama-3.2-1B-Instruct-Q4_K_M.gguf")
         .expect("Failed to download AI model");
 
     println!("Model located at: {:?}", path);
@@ -18,17 +18,24 @@ pub fn get_model() -> PathBuf {
 }
 
 pub fn get_tokenizer() -> PathBuf {
-    let api = Api::new().expect("Failed to create API client");
+    let api = get_auth();
 
     let repo = api.repo(Repo::new(
-        "huggingface/Llama-3.2-1B-Instruct-GGUF".to_string(),
+        "nicoboss/Llama-3.2-1B-Instruct-Uncensored".to_string(),
         hf_hub::RepoType::Model,
     ));
 
     let path = repo
-        .get("tokenizer.model")
+        .get("tokenizer.json")
         .expect("Failed to download tokenizer");
 
     println!("Tokenizer located at: {:?}", path);
     path
+}
+
+fn get_auth() -> Api {
+   ApiBuilder::new()
+   .with_token(Some("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".to_string()))
+   .build()
+   .unwrap()
 }
