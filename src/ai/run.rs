@@ -1,5 +1,5 @@
 use candle_core::Tensor;
-use candle_transformers::{generation::LogitsProcessor, models::quantized_gemma3::ModelWeights};
+use candle_transformers::{generation::LogitsProcessor, models::quantized_llama::ModelWeights};
 
 pub fn generate_tokens(prompt: String, tokenizer: &tokenizers::Tokenizer) -> Vec<u32> {
     let tokens = tokenizer

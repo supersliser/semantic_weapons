@@ -34,6 +34,7 @@ pub fn get_tokenizer() -> PathBuf {
 }
 
 fn get_auth() -> Api {
+    dotenvy::dotenv().ok();
    ApiBuilder::new()
    .with_token(Some(std::env::var("HF_KEY").expect("HF_KEY not set in .env")))
    .build()

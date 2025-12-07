@@ -2,7 +2,7 @@ use std::{fs, path::PathBuf};
 
 use candle_core::quantized::gguf_file;
 
-use candle_transformers::models::quantized_gemma3::ModelWeights;
+use candle_transformers::models::quantized_llama::ModelWeights;
 use tokenizers::Tokenizer;
 
 pub fn load_model(model_path: &PathBuf) -> ModelWeights {
