@@ -1,6 +1,6 @@
 use std::{fs, path::PathBuf};
 
-use candle_core::quantized::gguf_file;
+use candle_core::{Device, quantized::gguf_file};
 
 use candle_transformers::models::quantized_llama::ModelWeights;
 use tokenizers::Tokenizer;
@@ -9,7 +9,12 @@ pub fn load_model(model_path: &PathBuf) -> ModelWeights {
     println!("Loading model from: {:?}", model_path);
     let mut model_file = fs::File::open(model_path).expect("Failed to open model file");
     let model_content = gguf_file::Content::read(&mut model_file).expect("Failed to get model content");
-    ModelWeights::from_gguf(model_content, &mut model_file, &candle_core::Device::Cpu).expect("Failed to load Model")
+    if Device::cuda_if_available(0).is_ok() {
+        println!("Using CUDA device for model loading");
+    } else {
+        println!("Using CPU device for model loading");
+    }
+    ModelWeights::from_gguf(model_content, &mut model_file, &candle_core::Device::cuda_if_available(0).unwrap_or(candle_core::Device::Cpu)).expect("Failed to load Model")
 }
 
 pub fn load_tokenizer(tokenizer_path: &PathBuf) -> Tokenizer {
