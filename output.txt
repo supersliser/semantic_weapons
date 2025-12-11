@@ -1,0 +1,18 @@
+Based on the elf's general characteristics,I would suggest the following weapon parameters:
+*
+Blade_length: Long
+*
+Blade_width: Narrow
+*
+Blade_curvature: Circular
+*
+Blade_count: 1
+*
+Has_guard: true
+*
+Handle_material: Wood
+*
+Blade_material: Wood
+*
+Age: 500
+.
