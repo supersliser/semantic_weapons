@@ -1,4 +1,4 @@
-use candle_core::{Device, Tensor};
+use candle_core::Tensor;
 use candle_transformers::{generation::LogitsProcessor, models::quantized_llama::ModelWeights};
 
 pub fn generate_tokens(prompt: String, tokenizer: &tokenizers::Tokenizer) -> Vec<u32> {
