@@ -1,26 +1,30 @@
+use std::{fmt::Pointer, ptr::null};
+
 use glam::Vec3;
 
 use super::vertex::*;
-use crate::mesh::{Mesh, half_edge::HalfEdge};
+use crate::mesh::{
+    Mesh,
+    half_edge::{self, HalfEdge},
+};
 
 impl Mesh {
-    pub fn get_directed_half_edges(&self, up: Vec3, right: Vec3, fwd: Vec3) -> Vec<HalfEdge> {
+    pub fn get_directed_half_edges(&self) -> Vec<HalfEdge> {
         let mut output = Vec::new();
-        let mut directed_edges = Vec::new();
         for vert_a in 0..self.vertices.len() {
             let mut vertex_edges = vec![self.get_vertex(vert_a).unwrap()];
             for vert_b in 0..self.vertices.len() {
                 if vert_b == vert_a {
                     continue;
                 }
-                if self.are_connected( vert_a, vert_b) {
+                if self.are_connected(vert_a, vert_b) {
                     vertex_edges.push(self.get_vertex(vert_b).unwrap());
                 }
             }
-            let angles = Vec::new();
-            for v in vertex_edges {
+            let mut angles = Vec::new();
+            for v in vertex_edges.as_slice() {
                 let edge_vector = vertex_edges[0].get_position() - v.get_position();
-                let x = edge_vector.dot(u.get_position());
+                let x = edge_vector.dot(vertex_edges[0].get_position());
                 let y = edge_vector.dot(v.get_position());
                 let theta = x.atan2(y);
                 angles.push((v, theta));
@@ -34,11 +38,15 @@ impl Mesh {
                     }
                 }
             }
-            let adjacent_angles = Vec::new();
             for vertex in angles {
-                adjacent_angles.push((vert_a, vertex.0))
+                output.push(HalfEdge {
+                    vert_a: self.get_vertex(vert_a).unwrap(),
+                    vert_b: *vertex.0,
+                    next: null(),
+                });
+                let prev_index = output.len() - 1;
+                output[prev_index].next = output.last().unwrap();
             }
-            output.push(adjacent_angles)
         }
         output
     }
@@ -57,15 +65,20 @@ impl Mesh {
 
             let mut current_edge = edge;
 
-            loop {
-                face.add(current_edge.0);
-                visited.add(current_edge);
-                current_edge = edge.
-                if current_edge == edge {
-                    break;
+            unsafe {
+                loop {
+                    face.push(&*current_edge.vert_a);
+                    visited.push(current_edge);
+
+                    current_edge = *current_edge.next;
+
+                    if current_edge == edge {
+                        break;
+                    }
                 }
-            } 
-        } 
+            }
+            output.push(face);
+        }
 
         output
     }

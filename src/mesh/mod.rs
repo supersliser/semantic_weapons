@@ -3,11 +3,15 @@ pub mod edit_mesh;
 pub mod vertex;
 pub mod face;
 pub mod half_edge;
+use glam::Vec3;
 use vertex::*;
 
 pub struct Mesh {
     vertices: Vec<Vertex>,
     connections: Vec<bool>,
+    up: Vec3,
+    fwd: Vec3,
+    right: Vec3
 }
 
 impl Default for Mesh {
@@ -15,16 +19,16 @@ impl Default for Mesh {
         Self {
             vertices: Vec::new(),
             connections: Vec::new(),
+            up: Vec3 { x: 0.0, y: 1.0, z: 0.0 },
+            fwd: Vec3 {x: 0.0, y: 0.0, z: 1.0},
+            right: Vec3 { x: -1.0, y: 0.0, z: 0.0 }
         }
     }
 }
 
 impl Mesh {
     pub fn new() -> Self {
-        Self {
-            vertices: Vec::new(),
-            connections: Vec::new(),
-        }
+        self::Mesh::default()
     }
 
     pub fn add_vertex(&mut self, vertex: Option<Vertex>) {
