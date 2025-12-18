@@ -2,6 +2,7 @@ use std::ops::Div;
 
 use glam::{Vec2, Vec3, Vec4};
 
+#[derive(PartialEq)]
 pub struct Vertex {
     position: Vec3,
     normal: Vec3,

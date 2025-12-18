@@ -1,6 +1,9 @@
-use super::vertex::*;
 
 pub mod edit_mesh;
+pub mod vertex;
+pub mod face;
+pub mod half_edge;
+use vertex::*;
 
 pub struct Mesh {
     vertices: Vec<Vertex>,
