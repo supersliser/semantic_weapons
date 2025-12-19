@@ -1,3 +1,4 @@
+use core::prelude::v1;
 use std::{fmt::Pointer, ptr::null};
 
 use glam::Vec3;
@@ -9,7 +10,7 @@ use crate::mesh::{
 };
 
 impl Mesh {
-    pub fn get_directed_half_edges(&self) -> Vec<HalfEdge> {
+    fn get_directed_half_edges(&self) -> Vec<HalfEdge> {
         let mut output = Vec::new();
         for vert_a in 0..self.vertices.len() {
             let mut vertex_edges = vec![self.get_vertex(vert_a).unwrap()];
@@ -81,5 +82,14 @@ impl Mesh {
         }
 
         output
+    }
+
+    pub fn get_face_normal(&self, face: Vec<&Vertex>) -> Vec3 {
+        let mut total_normal = Vec3::ZERO;
+        for v in face.as_slice() {
+            total_normal += v.get_normal();
+        }
+        let len = face.len() as f32;
+        total_normal / Vec3 {x: len, y: len, z: len }
     }
 }
