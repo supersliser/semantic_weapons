@@ -1,9 +1,6 @@
-use fidget::{
-    Context,
-    context::{Node, Tree},
-};
+use fidget::context::Tree;
 
-pub fn create_basic_weapon() -> Tree {
+pub fn create_basic_weapon(x: Tree, y: Tree, z: Tree) -> Tree {
     let pommel_shift = -0.5;
     let pommel_extension = 4.5;
     let pommel_radius = -3.5;
@@ -14,6 +11,8 @@ pub fn create_basic_weapon() -> Tree {
     let guard_bottom = 4.0;
     let guard_front_stop = 2.0;
     let guard_back_stop = 2.0;
+    let guard_left_stop = 5.0;
+    let guard_right_stop = 5.0;
     let guard_effect_radius = 2.0;
     let guard_x_offset = 2.0;
     let guard_z_offset = 2.0;
@@ -29,9 +28,9 @@ pub fn create_basic_weapon() -> Tree {
     let blade_scale_decrement = 10.0;
 
     blade_and_guard(
-        Tree::x(),
-        Tree::y(),
-        Tree::z(),
+        x,
+        y,
+        z,
         pommel_extension,
         pommel_radius,
         pommel_shift,
@@ -39,6 +38,8 @@ pub fn create_basic_weapon() -> Tree {
         guard_bottom,
         guard_effect_radius,
         guard_front_stop,
+        guard_left_stop,
+        guard_right_stop,
         guard_x_offset,
         guard_z_offset,
         guard_z_scale,
@@ -147,12 +148,17 @@ fn guard_shape(
     guard_bottom: f64,
     guard_front_stop: f64,
     guard_back_stop: f64,
+    guard_left_stop: f64,
+    guard_right_stop: f64,
 ) -> Tree {
     Tree::max(
         &(y.clone() + guard_bottom),
         Tree::max(
             &(-x.clone() - guard_front_stop),
-            x.clone() - guard_back_stop,
+            Tree::max(
+                &(-z.clone() - guard_left_stop),
+                Tree::max(&(z.clone() - guard_right_stop), x.clone() - guard_back_stop),
+            ),
         ),
     )
 }
@@ -169,6 +175,8 @@ fn guard(
     guard_back_stop: f64,
     guard_effect_radius: f64,
     guard_front_stop: f64,
+    guard_left_stop: f64,
+    guard_right_stop: f64,
     guard_x_offset: f64,
     guard_z_scale: f64,
     guard_z_offset: f64,
@@ -184,6 +192,8 @@ fn guard(
                         guard_bottom,
                         guard_front_stop,
                         guard_back_stop,
+                        guard_left_stop,
+                        guard_right_stop
                     )),
                     -guard_curve_effect(
                         x.clone() + guard_x_offset,
@@ -226,6 +236,8 @@ fn handle_and_guard(
     guard_bottom: f64,
     guard_effect_radius: f64,
     guard_front_stop: f64,
+    guard_left_stop: f64,
+    guard_right_stop: f64,
     guard_x_offset: f64,
     guard_z_offset: f64,
     guard_z_scale: f64,
@@ -254,6 +266,8 @@ fn handle_and_guard(
                 guard_back_stop,
                 guard_effect_radius,
                 guard_front_stop,
+                guard_left_stop,
+                guard_right_stop,
                 guard_x_offset,
                 guard_z_scale,
                 guard_z_offset,
@@ -286,7 +300,7 @@ fn blade(
                 )),
                 -(-x.clone() + blade_front_width),
             )),
-            -(z.clone() * blade_left_top_slope * -(y.clone() - 40)),
+            -(z.clone() * blade_left_top_slope + -(y.clone() - 40)),
         )),
         -(-z.clone() * blade_right_top_slope + -(y.clone() - 40)),
     )
@@ -303,6 +317,8 @@ fn blade_and_guard(
     guard_bottom: f64,
     guard_effect_radius: f64,
     guard_front_stop: f64,
+    guard_left_stop: f64,
+    guard_right_stop: f64,
     guard_x_offset: f64,
     guard_z_offset: f64,
     guard_z_scale: f64,
@@ -330,6 +346,8 @@ fn blade_and_guard(
             guard_bottom,
             guard_effect_radius,
             guard_front_stop,
+            guard_left_stop,
+            guard_right_stop,
             guard_x_offset,
             guard_z_offset,
             guard_z_scale,

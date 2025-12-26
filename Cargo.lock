@@ -3666,6 +3666,7 @@ dependencies = [
  "fidget",
  "glam 0.30.9",
  "hf-hub",
+ "nalgebra 0.34.1",
  "obj",
  "serde",
  "serde_json",

@@ -1,13 +1,20 @@
-use fidget::{Context, context::Tree, jit::JitShape, mesh::{Octree, Settings}};
+use fidget::{
+    Context,
+    context::Tree,
+    jit::JitShape,
+    mesh::{Octree, Settings},
+};
+use nalgebra::Matrix4;
 use semantic_weapons::model_generator::create_basic_weapon;
+
 fn main() {
-
-    let mut ctx = Context::new();
-    let sdf = create_basic_weapon();
-
+    let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z());
+    let world_to_model = Matrix4::new_translation(&nalgebra::Vector3::new(0.0, 17.5, 0.0))
+        * Matrix4::new_scaling(25.0);
     let shape = JitShape::from(sdf);
     let settings = Settings {
-        depth: 4,
+        depth: 10,
+        world_to_model: world_to_model,
         ..Default::default()
     };
     let o = Octree::build(&shape, &settings).unwrap();
