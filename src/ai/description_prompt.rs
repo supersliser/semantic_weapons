@@ -4,7 +4,7 @@ pub fn get_system_prompt() -> String {
     
     Analyse the character's traits. Then, map them to these numerical ranges:\n
     - blade_length: Short, Medium, Long, Great\n
-    - blade_width: Narrow, Standard, Wide\n
+    - blade_width: Narrow, Standard, Wide, Rapier\n
     - blade_curvature: Straight, Curved, RightAngled, Circular\n
     - blade_count: 1-2\n
     - has_guard: true/false\n

@@ -1,16 +1,18 @@
 use fidget::{
-    Context,
     context::Tree,
     jit::JitShape,
     mesh::{Octree, Settings},
 };
 use nalgebra::Matrix4;
-use semantic_weapons::model_generator::create_basic_weapon;
+use semantic_weapons::model_generator::{create_basic_weapon, model_params::ModelParams};
 
 fn main() {
-    let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z());
-    let world_to_model = Matrix4::new_translation(&nalgebra::Vector3::new(0.0, 17.5, 0.0))
-        * Matrix4::new_scaling(25.0);
+    let mut params = ModelParams::default();
+    params.set_blade_length(semantic_weapons::weapon_params::BladeLength::Short);
+    params.set_blade_width(semantic_weapons::weapon_params::BladeWidth::Narrow);
+    let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z(), params);
+    let world_to_model = Matrix4::new_translation(&nalgebra::Vector3::new(0.0, 0.0, 0.0))
+        * Matrix4::new_scaling(50.0);
     let shape = JitShape::from(sdf);
     let settings = Settings {
         depth: 10,

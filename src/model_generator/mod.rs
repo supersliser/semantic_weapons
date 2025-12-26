@@ -1,59 +1,38 @@
+pub mod model_params;
+pub mod convert_to_nums;
 use fidget::context::Tree;
 
-pub fn create_basic_weapon(x: Tree, y: Tree, z: Tree) -> Tree {
-    let pommel_shift = -0.5;
-    let pommel_extension = 4.5;
-    let pommel_radius = -3.5;
-    let handle_bottom_limit = 5.5;
-    let handle_radius = 0.5;
-    let handle_spiral_offset = 0.2;
+use crate::model_generator::model_params::ModelParams;
 
-    let guard_bottom = 4.0;
-    let guard_front_stop = 2.0;
-    let guard_back_stop = 2.0;
-    let guard_left_stop = 5.0;
-    let guard_right_stop = 5.0;
-    let guard_effect_radius = 2.0;
-    let guard_x_offset = 2.0;
-    let guard_z_offset = 2.0;
-    let guard_z_scale = 3.0;
-
-    let blade_bottom = 15.0;
-    let blade_radius = 2.0;
-    let blade_front_width = 1.0;
-    let blade_back_width = 1.0;
-    let blade_left_top_slope = 2.0;
-    let blade_right_top_slope = 2.0;
-    let blade_scale = 3.0;
-    let blade_scale_decrement = 10.0;
-
+pub fn create_basic_weapon(x: Tree, y: Tree, z: Tree, params: ModelParams) -> Tree {
     blade_and_guard(
         x,
         y,
         z,
-        pommel_extension,
-        pommel_radius,
-        pommel_shift,
-        guard_back_stop,
-        guard_bottom,
-        guard_effect_radius,
-        guard_front_stop,
-        guard_left_stop,
-        guard_right_stop,
-        guard_x_offset,
-        guard_z_offset,
-        guard_z_scale,
-        handle_bottom_limit,
-        handle_radius,
-        handle_spiral_offset,
-        blade_back_width,
-        blade_bottom,
-        blade_front_width,
-        blade_left_top_slope,
-        blade_radius,
-        blade_right_top_slope,
-        blade_scale,
-        blade_scale_decrement,
+        params.pommel_extension,
+        params.pommel_radius,
+        params.pommel_shift,
+        params.guard_back_stop,
+        params.guard_bottom,
+        params.guard_effect_radius,
+        params.guard_front_stop,
+        params.guard_left_stop,
+        params.guard_right_stop,
+        params.guard_x_offset,
+        params.guard_z_offset,
+        params.guard_z_scale,
+        params.handle_bottom_limit,
+        params.handle_radius,
+        params.handle_spiral_offset,
+        params.blade_back_width,
+        params.blade_bottom,
+        params.blade_front_width,
+        params.blade_left_top_slope,
+        params.blade_radius,
+        params.blade_right_top_slope,
+        params.blade_scale,
+        params.blade_scale_decrement,
+        params.blade_height
     )
 }
 
@@ -163,7 +142,7 @@ fn guard_shape(
     )
 }
 
-fn guard_curve_effect(x: Tree, y: Tree, z: Tree, guard_effect_radius: f64) -> Tree {
+fn guard_curve_effect(x: Tree, z: Tree, guard_effect_radius: f64) -> Tree {
     x.clone() * x.clone() + z.clone() * z.clone() - guard_effect_radius
 }
 
@@ -197,28 +176,24 @@ fn guard(
                     )),
                     -guard_curve_effect(
                         x.clone() + guard_x_offset,
-                        y.clone(),
                         (z.clone() / guard_z_scale) + guard_z_offset,
                         guard_effect_radius,
                     ),
                 )),
                 -guard_curve_effect(
                     x.clone() + guard_x_offset,
-                    y.clone(),
                     (z.clone() / guard_z_scale) - guard_z_offset,
                     guard_effect_radius,
                 ),
             )),
             -guard_curve_effect(
                 x.clone() - guard_x_offset,
-                y.clone(),
                 (z.clone() / guard_z_scale) - guard_z_offset,
                 guard_effect_radius,
             ),
         )),
         -guard_curve_effect(
             x.clone() - guard_x_offset,
-            y.clone(),
             (z.clone() / guard_z_scale) + guard_z_offset,
             guard_effect_radius,
         ),
@@ -287,6 +262,7 @@ fn blade(
     blade_front_width: f64,
     blade_left_top_slope: f64,
     blade_right_top_slope: f64,
+    blade_height: f64
 ) -> Tree {
     Tree::max(
         &(Tree::max(
@@ -300,9 +276,9 @@ fn blade(
                 )),
                 -(-x.clone() + blade_front_width),
             )),
-            -(z.clone() * blade_left_top_slope + -(y.clone() - 40)),
+            -(z.clone() * blade_left_top_slope + -(y.clone() - (blade_height + blade_bottom))),
         )),
-        -(-z.clone() * blade_right_top_slope + -(y.clone() - 40)),
+        -(-z.clone() * blade_right_top_slope + -(y.clone() - (blade_height + blade_bottom))),
     )
 }
 
@@ -333,6 +309,7 @@ fn blade_and_guard(
     blade_right_top_slope: f64,
     blade_scale: f64,
     blade_scale_decrement: f64,
+    blade_height: f64
 ) -> Tree {
     Tree::min(
         &(handle_and_guard(
@@ -365,6 +342,7 @@ fn blade_and_guard(
             blade_front_width,
             blade_left_top_slope,
             blade_right_top_slope,
+            blade_height,
         ),
     )
 }
