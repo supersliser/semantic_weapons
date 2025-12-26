@@ -11,10 +11,22 @@ background { Blue }
 #declare handle_radius = 0.5;
 #declare handle_spiral_offset = 0.2;
 
+#declare guard_bottom = 4;
+#declare guard_height_size = 10;
+#declare guard_height = 20;
+#declare guard_front_stop = 2;
+#declare guard_back_stop = 2;
 #declare guard_effect_radius = 2;
 #declare guard_x_offset = 2;
 #declare guard_z_offset = 2;
 #declare guard_z_scale = 3;
+
+#declare blade_bottom = 15;
+#declare blade_radius = 2;
+#declare blade_front_width = 1;
+#declare blade_back_width = 1;
+#declare left_blade_top_slope = 2;
+#declare right_blade_top_slope = 2;
 
 #declare fn_handle_mid = function {max(x*x + z*z - handle_radius, handle_bottom_limit - y)}
 #declare fn_handle_pommel = function {max(x*x + z*z - (y + pommel_shift) - pommel_radius, (y + pommel_shift) - pommel_extension)}
@@ -23,14 +35,23 @@ background { Blue }
 #declare fn_handle = function {min(fn_handle_mid(x,y,z), fn_handle_pommel(x,y+pommel_shift,z), fn_handle_spiral(x, y, z))}
 
 
-#declare fn_hand_guard_shape = function {max(y + 4, max((-x - 2), (x - 2)))}
+#declare fn_hand_guard_shape = function {max(y + guard_bottom, max((-x - guard_front_stop), (x - guard_back_stop)))}
 #declare fn_hand_guard_curve_effect = function {(x*x+z*z)-guard_effect_radius}
-#declare fn_hand_guard = function {max(fn_hand_guard_shape(x,y,z), -fn_hand_guard_curve_effect(x + guard_x_offset, y, (z / guard_z_scale) + guard_z_offset), -fn_hand_guard_curve_effect(x + guard_x_offset, y, (z / guard_z_scale) - guard_z_offset),-fn_hand_guard_curve_effect(x - guard_x_offset, y, (z / guard_z_scale) - guard_z_offset),-fn_hand_guard_curve_effect(x - guard_x_offset, y, (z / guard_z_scale) + guard_z_offset))}
 
-#declare fn_handle_and_guard = function {max(min(fn_handle(x, y, z), fn_hand_guard(x, (30 - y) - 20, z)), -(15-y))}
+#declare fn_hand_guard = function {max(fn_hand_guard_shape(x,y,z), -fn_hand_guard_curve_effect(x + guard_x_offset, y, (z / guard_z_scale) + guard_z_offset), 
+-fn_hand_guard_curve_effect(x + guard_x_offset, y, (z / guard_z_scale) - guard_z_offset),
+-fn_hand_guard_curve_effect(x - guard_x_offset, y, (z / guard_z_scale) - guard_z_offset),
+-fn_hand_guard_curve_effect(x - guard_x_offset, y, (z / guard_z_scale) + guard_z_offset))}
+
+#declare fn_handle_and_guard = function {max(min(fn_handle(x, y, z), fn_hand_guard(x, (guard_height_size + guard_height - y) - guard_height, z)), -(blade_bottom-y))}
 
 
-#declare fn_blade = function {max(x*x+z*z-2, -(y-15), -(x+1), -(-x+1), -(z*2 + -(y-40)),-(-z*2 + -(y-40)))}
+#declare fn_blade = function {max(x*x+z*z-blade_radius, 
+-(y-blade_bottom), 
+-(x+blade_back_width), 
+-(-x+blade_front_width), 
+-(z*left_blade_top_slope + -(y-40)),
+-(-z*right_blade_top_slope + -(y-40)))}
 
 
 isosurface {
