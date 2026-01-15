@@ -4,7 +4,7 @@ pub fn get_system_prompt() -> String {
     
     Analyse the character's traits. Then, map them to these numerical ranges:\n
     - blade_length: Short, Medium, Long, Great\n
-    - blade_width: Narrow, Standard, Wide\n
+    - blade_width: Narrow, Standard, Wide, Rapier\n
     - blade_curvature: Straight, Curved, RightAngled, Circular\n
     - blade_count: 1-2\n
     - has_guard: true/false\n
@@ -32,9 +32,10 @@ pub fn get_system_prompt() -> String {
 }
 
 pub fn format_user_prompt(desc: String) -> String {
-    String::from("<|start_header_id|>user<|end_header_id|>\n") 
-    + &desc 
-    + "\n<|eot_id|>\n\n"
+    let mut output = String::from("<|start_header_id|>user<|end_header_id|>\n");
+    output.push_str(desc.as_str());
+    output.push_str(&String::from("\n<|eot_id|>\n\n"));
+    output
 }
 
 pub fn get_assistant_prompt() -> String {
@@ -42,9 +43,11 @@ pub fn get_assistant_prompt() -> String {
 }
 
 pub fn get_full_prompt(desc: String) -> String {
-    let system_prompt = get_system_prompt();
+    let mut system_prompt = get_system_prompt();
     let user_prompt = format_user_prompt(desc);
     let assistant_prompt = get_assistant_prompt();
     
-    system_prompt + &user_prompt + &assistant_prompt
+    system_prompt.push_str(&user_prompt);
+    system_prompt.push_str(&assistant_prompt);
+    system_prompt
 }
