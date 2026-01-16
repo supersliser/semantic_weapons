@@ -18,7 +18,6 @@ pub enum BladeLength {
 }
 
 pub enum BladeWidth {
-    Rapier,
     Narrow,
     Standard,
     Wide,

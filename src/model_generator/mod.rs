@@ -1,5 +1,5 @@
-pub mod model_params;
 pub mod convert_to_nums;
+pub mod model_params;
 use fidget::context::Tree;
 
 use crate::model_generator::model_params::ModelParams;
@@ -11,7 +11,6 @@ pub fn create_basic_weapon(x: Tree, y: Tree, z: Tree, params: ModelParams) -> Tr
         z,
         params.pommel_extension,
         params.pommel_radius,
-        params.pommel_shift,
         params.guard_back_stop,
         params.guard_bottom,
         params.guard_effect_radius,
@@ -19,43 +18,35 @@ pub fn create_basic_weapon(x: Tree, y: Tree, z: Tree, params: ModelParams) -> Tr
         params.guard_left_stop,
         params.guard_right_stop,
         params.guard_x_offset,
+        params.guard_x_scale,
         params.guard_z_offset,
         params.guard_z_scale,
         params.handle_bottom_limit,
         params.handle_radius,
-        params.handle_spiral_offset,
+        params.handle_grip_offset,
+        params.handle_grip_y_scale,
         params.blade_back_width,
         params.blade_bottom,
         params.blade_front_width,
         params.blade_left_top_slope,
         params.blade_radius,
         params.blade_right_top_slope,
-        params.blade_scale,
         params.blade_scale_decrement,
-        params.blade_height
+        params.blade_height,
     )
 }
 
-fn handle_mid(x: Tree, y: Tree, z: Tree, handle_radius: f64, handle_bottom_radius: f64) -> Tree {
+fn handle_mid(x: Tree, y: Tree, z: Tree, handle_radius: f64, handle_bottom_limit: f64) -> Tree {
     Tree::max(
         &(x.clone() * x.clone() + z.clone() * z.clone() - handle_radius),
-        handle_bottom_radius - y.clone(),
+        handle_bottom_limit - y.clone(),
     )
 }
 
-fn handle_pommel(
-    x: Tree,
-    y: Tree,
-    z: Tree,
-    pommel_shift: f64,
-    pommel_radius: f64,
-    pommel_extension: f64,
-) -> Tree {
+fn handle_pommel(x: Tree, y: Tree, z: Tree, pommel_radius: f64, pommel_extension: f64) -> Tree {
     Tree::max(
-        &(x.clone() * x.clone() + z.clone() * z.clone()
-            - (y.clone() + pommel_shift)
-            - pommel_radius),
-        (y.clone() + pommel_shift) - pommel_extension,
+        &(x.clone() * x.clone() + z.clone() * z.clone() - y.clone() - pommel_radius),
+        y.clone() - pommel_extension,
     )
 }
 
@@ -64,16 +55,16 @@ fn handle_spiral(
     y: Tree,
     z: Tree,
     handle_radius: f64,
-    handle_spiral_offset: f64,
+    handle_grip_offset: f64,
     handle_bottom_limit: f64,
+    handle_grip_y_scale: f64,
 ) -> Tree {
     Tree::max(
         &(Tree::max(
-            &(Tree::max(
-                &((x.clone() * x.clone() + z.clone() * z.clone())
-                    - (handle_radius + handle_spiral_offset)),
-                Tree::sin(&(x.clone() * x.clone() - y.clone() * y.clone())),
-            )),
+            &((x.clone() * x.clone() + z.clone() * z.clone())
+                - (handle_radius
+                    + handle_grip_offset
+                        * (Tree::floor(&Tree::modulo(&(y.clone() * handle_grip_y_scale), 2.0))))),
             -(x.clone() * x.clone() + z.clone() * z.clone() - handle_radius),
         )),
         -y.clone() + handle_bottom_limit,
@@ -84,12 +75,12 @@ fn handle(
     x: Tree,
     y: Tree,
     z: Tree,
-    pommel_shift: f64,
     handle_radius: f64,
     handle_bottom_limit: f64,
     pommel_extension: f64,
     pommel_radius: f64,
-    handle_spiral_offset: f64,
+    handle_grip_offset: f64,
+    handle_grip_y_scale: f64,
 ) -> Tree {
     Tree::min(
         &handle_spiral(
@@ -97,8 +88,9 @@ fn handle(
             y.clone(),
             z.clone(),
             handle_radius,
-            handle_spiral_offset,
+            handle_grip_offset,
             handle_bottom_limit,
+            handle_grip_y_scale,
         ),
         Tree::min(
             &(&handle_mid(
@@ -110,9 +102,8 @@ fn handle(
             )),
             handle_pommel(
                 x.clone(),
-                y.clone() + pommel_shift,
+                y.clone() - (handle_bottom_limit - 5.0),
                 z.clone(),
-                pommel_shift,
                 pommel_radius,
                 pommel_extension,
             ),
@@ -157,6 +148,7 @@ fn guard(
     guard_left_stop: f64,
     guard_right_stop: f64,
     guard_x_offset: f64,
+    guard_x_scale: f64,
     guard_z_scale: f64,
     guard_z_offset: f64,
 ) -> Tree {
@@ -172,28 +164,28 @@ fn guard(
                         guard_front_stop,
                         guard_back_stop,
                         guard_left_stop,
-                        guard_right_stop
+                        guard_right_stop,
                     )),
                     -guard_curve_effect(
-                        x.clone() + guard_x_offset,
+                        (x.clone() / guard_x_scale) + guard_x_offset,
                         (z.clone() / guard_z_scale) + guard_z_offset,
                         guard_effect_radius,
                     ),
                 )),
                 -guard_curve_effect(
-                    x.clone() + guard_x_offset,
+                    (x.clone() / guard_x_scale) + guard_x_offset,
                     (z.clone() / guard_z_scale) - guard_z_offset,
                     guard_effect_radius,
                 ),
             )),
             -guard_curve_effect(
-                x.clone() - guard_x_offset,
+                (x.clone() / guard_x_scale) - guard_x_offset,
                 (z.clone() / guard_z_scale) - guard_z_offset,
                 guard_effect_radius,
             ),
         )),
         -guard_curve_effect(
-            x.clone() - guard_x_offset,
+            (x.clone() / guard_x_scale) - guard_x_offset,
             (z.clone() / guard_z_scale) + guard_z_offset,
             guard_effect_radius,
         ),
@@ -206,7 +198,6 @@ fn handle_and_guard(
     z: Tree,
     pommel_extension: f64,
     pommel_radius: f64,
-    pommel_shift: f64,
     guard_back_stop: f64,
     guard_bottom: f64,
     guard_effect_radius: f64,
@@ -214,11 +205,13 @@ fn handle_and_guard(
     guard_left_stop: f64,
     guard_right_stop: f64,
     guard_x_offset: f64,
+    guard_x_scale: f64,
     guard_z_offset: f64,
     guard_z_scale: f64,
     handle_bottom_limit: f64,
     handle_radius: f64,
-    handle_spiral_offset: f64,
+    handle_grip_offset: f64,
+    handle_grip_y_scale: f64,
 ) -> Tree {
     Tree::max(
         &(Tree::min(
@@ -226,12 +219,12 @@ fn handle_and_guard(
                 x.clone(),
                 y.clone(),
                 z.clone(),
-                pommel_shift,
                 handle_radius,
                 handle_bottom_limit,
                 pommel_extension,
                 pommel_radius,
-                handle_spiral_offset,
+                handle_grip_offset,
+                handle_grip_y_scale,
             )),
             guard(
                 x.clone(),
@@ -244,6 +237,7 @@ fn handle_and_guard(
                 guard_left_stop,
                 guard_right_stop,
                 guard_x_offset,
+                guard_x_scale,
                 guard_z_scale,
                 guard_z_offset,
             ),
@@ -257,29 +251,137 @@ fn blade(
     y: Tree,
     z: Tree,
     blade_radius: f64,
-    blade_bottom: f64,
     blade_back_width: f64,
     blade_front_width: f64,
     blade_left_top_slope: f64,
     blade_right_top_slope: f64,
-    blade_height: f64
+    blade_height: f64,
 ) -> Tree {
     Tree::max(
         &(Tree::max(
             &(Tree::max(
                 &(Tree::max(
                     &(Tree::max(
-                        &(x.clone() * x.clone() + z.clone() * z.clone() - blade_radius),
-                        -(y.clone() - blade_bottom),
+                        &Tree::max(
+                            &((x.clone() * x.clone()) + (z.clone() * z.clone()) - blade_radius),
+                            -y.clone(),
+                        ),
+                        -(-y.clone() + blade_height),
                     )),
                     -(x.clone() + blade_back_width),
                 )),
                 -(-x.clone() + blade_front_width),
             )),
-            -(z.clone() * blade_left_top_slope + -(y.clone() - (blade_height + blade_bottom))),
+            -(z.clone() * blade_left_top_slope + -(y.clone() - blade_height)),
         )),
-        -(-z.clone() * blade_right_top_slope + -(y.clone() - (blade_height + blade_bottom))),
+        -(-z.clone() * blade_right_top_slope + -(y.clone() - blade_height)),
     )
+}
+
+fn blade_scale_decrease(
+    x: Tree,
+    y: Tree,
+    z: Tree,
+    blade_radius: f64,
+    blade_back_width: f64,
+    blade_front_width: f64,
+    blade_left_top_slope: f64,
+    blade_right_top_slope: f64,
+    blade_height: f64,
+    blade_scale_decrement: f64,
+) -> Tree {
+    Tree::max(
+        &Tree::max(
+        &Tree::max(
+        &Tree::max(
+        &Tree::max(
+            &blade(
+                x.clone(),
+                y.clone(),
+                z.clone(),
+                blade_radius,
+                blade_back_width,
+                blade_front_width,
+                blade_left_top_slope,
+                blade_right_top_slope,
+                blade_height,
+            ),
+            -Tree::min(
+                &(blade_scale_v_decrease_modifier(
+                    x.clone(),
+                    -z.clone(),
+                    blade_radius,
+                    blade_scale_decrement,
+                )),
+                Tree::min(
+                    &(blade_scale_v_decrease_modifier(
+                        x.clone(),
+                        z.clone(),
+                        blade_radius,
+                        blade_scale_decrement,
+                    )),
+                    Tree::min(
+                        &(blade_scale_v_decrease_modifier(
+                            -x.clone(),
+                            z.clone(),
+                            blade_radius,
+                            blade_scale_decrement,
+                        )),
+                        blade_scale_v_decrease_modifier(
+                            -x.clone(),
+                            -z.clone(),
+                            blade_radius,
+                            blade_scale_decrement,
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        blade_scale_d_decrease_modifier(
+            x.clone()*blade_right_top_slope,
+            y.clone(),
+            z.clone()*blade_right_top_slope,
+            blade_height,
+            blade_scale_decrement,
+        )),blade_scale_d_decrease_modifier(
+            -x.clone()*blade_right_top_slope,
+            y.clone(),
+            z.clone()*blade_right_top_slope,
+            blade_height,
+            blade_scale_decrement,
+        )),blade_scale_d_decrease_modifier(
+            x.clone()*blade_left_top_slope,
+            y.clone(),
+            -z.clone()*blade_left_top_slope,
+            blade_height,
+            blade_scale_decrement,
+        )),blade_scale_d_decrease_modifier(
+            -x.clone()*blade_left_top_slope,
+            y.clone(),
+            -z.clone()*blade_left_top_slope,
+            blade_height,
+            blade_scale_decrement,
+        ),
+    )
+}
+
+fn blade_scale_v_decrease_modifier(
+    x: Tree,
+    z: Tree,
+    blade_radius: f64,
+    blade_scale_decrement: f64,
+) -> Tree {
+    x.clone() * blade_scale_decrement + blade_radius + z.clone() * blade_scale_decrement
+}
+
+fn blade_scale_d_decrease_modifier(
+    x: Tree,
+    y: Tree,
+    z: Tree,
+    blade_height: f64,
+    blade_scale_decrement: f64,
+) -> Tree {
+    x.clone() * blade_scale_decrement + y.clone() - blade_height + z.clone() * blade_scale_decrement
 }
 
 fn blade_and_guard(
@@ -288,7 +390,6 @@ fn blade_and_guard(
     z: Tree,
     pommel_extension: f64,
     pommel_radius: f64,
-    pommel_shift: f64,
     guard_back_stop: f64,
     guard_bottom: f64,
     guard_effect_radius: f64,
@@ -296,29 +397,29 @@ fn blade_and_guard(
     guard_left_stop: f64,
     guard_right_stop: f64,
     guard_x_offset: f64,
+    guard_x_scale: f64,
     guard_z_offset: f64,
     guard_z_scale: f64,
     handle_bottom_limit: f64,
     handle_radius: f64,
-    handle_spiral_offset: f64,
+    handle_grip_offset: f64,
+    handle_grip_y_scale: f64,
     blade_back_width: f64,
     blade_bottom: f64,
     blade_front_width: f64,
     blade_left_top_slope: f64,
     blade_radius: f64,
     blade_right_top_slope: f64,
-    blade_scale: f64,
     blade_scale_decrement: f64,
-    blade_height: f64
+    blade_height: f64,
 ) -> Tree {
-    Tree::min(
+    -Tree::min(
         &(handle_and_guard(
             x.clone(),
             y.clone(),
             z.clone(),
             pommel_extension,
             pommel_radius,
-            pommel_shift,
             guard_back_stop,
             guard_bottom,
             guard_effect_radius,
@@ -326,23 +427,25 @@ fn blade_and_guard(
             guard_left_stop,
             guard_right_stop,
             guard_x_offset,
+            guard_x_scale,
             guard_z_offset,
             guard_z_scale,
             handle_bottom_limit,
             handle_radius,
-            handle_spiral_offset,
+            handle_grip_offset,
+            handle_grip_y_scale,
         )),
-        blade(
-            x.clone() * (blade_scale + (y.clone() / blade_scale_decrement)),
-            y.clone(),
+        blade_scale_decrease(
+            x.clone(),
+            y.clone() - blade_bottom,
             z.clone(),
             blade_radius,
-            blade_bottom,
             blade_back_width,
             blade_front_width,
             blade_left_top_slope,
             blade_right_top_slope,
             blade_height,
+            blade_scale_decrement,
         ),
     )
 }

@@ -1,6 +1,6 @@
 #include "colors.inc"
 
-camera { location <30, 30, 30> look_at <0, 25, 0> }
+camera { location <30, 30, 30> look_at <0, 25, 0> angle 60 }
 light_source { <10, 20, 10> White }
 background { Blue }
 
