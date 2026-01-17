@@ -35,12 +35,12 @@ fn main() {
     }
 
     let mut params = ModelParams::default();
-    params.set_blade_length(semantic_weapons::weapon_params::BladeLength::Great);
-    params.set_blade_width(semantic_weapons::weapon_params::BladeWidth::Wide);
-    // params.set_blade_count(0);
+    params.set_blade_length(semantic_weapons::weapon_params::BladeLength::Long);
+    params.set_blade_width(semantic_weapons::weapon_params::BladeWidth::Standard);
+    params.set_blade_count(4);
     let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z(), params);
     let world_to_model = Matrix4::new_translation(&nalgebra::Vector3::new(0.0, 0.0, 0.0))
-        * Matrix4::new_scaling((200) as f32);
+        * Matrix4::new_scaling(((params.blade_height + params.blade_bottom) * (params.v_mirrored as i32 as f64 * 2.0)) as f32);
     let shape = JitShape::from(sdf);
     let settings = Settings {
         depth: quality,

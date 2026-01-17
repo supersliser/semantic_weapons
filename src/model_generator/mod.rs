@@ -1,5 +1,6 @@
 pub mod convert_to_nums;
 pub mod model_params;
+mod utils;
 use fidget::context::Tree;
 
 use crate::model_generator::model_params::ModelParams;
@@ -31,8 +32,12 @@ pub fn create_basic_weapon(x: Tree, y: Tree, z: Tree, params: ModelParams) -> Tr
         params.blade_left_top_slope,
         params.blade_radius,
         params.blade_right_top_slope,
-        params.blade_scale_decrement,
+        params.blade_scale_back_left_decrement,
+        params.blade_scale_back_right_decrement,
+        params.blade_scale_front_left_decrement,
+        params.blade_scale_front_right_decrement,
         params.blade_height,
+        params.v_mirrored,
     )
 }
 
@@ -81,7 +86,24 @@ fn handle(
     pommel_radius: f64,
     handle_grip_offset: f64,
     handle_grip_y_scale: f64,
+    mirrored_v: bool,
 ) -> Tree {
+    let handle = handle_mid(
+        x.clone(),
+        y.clone(),
+        z.clone(),
+        handle_radius,
+        handle_bottom_limit,
+    );
+    if !mirrored_v {
+        handle.min(handle_pommel(
+            x.clone(),
+            y.clone() - (handle_bottom_limit - 5.0),
+            z.clone(),
+            pommel_radius,
+            pommel_extension,
+        ));
+    }
     Tree::min(
         &handle_spiral(
             x.clone(),
@@ -92,22 +114,7 @@ fn handle(
             handle_bottom_limit,
             handle_grip_y_scale,
         ),
-        Tree::min(
-            &(&handle_mid(
-                x.clone(),
-                y.clone(),
-                z.clone(),
-                handle_radius,
-                handle_bottom_limit,
-            )),
-            handle_pommel(
-                x.clone(),
-                y.clone() - (handle_bottom_limit - 5.0),
-                z.clone(),
-                pommel_radius,
-                pommel_extension,
-            ),
-        ),
+        handle,
     )
 }
 
@@ -212,6 +219,7 @@ fn handle_and_guard(
     handle_radius: f64,
     handle_grip_offset: f64,
     handle_grip_y_scale: f64,
+    mirrored_v: bool,
 ) -> Tree {
     Tree::max(
         &(Tree::min(
@@ -225,6 +233,7 @@ fn handle_and_guard(
                 pommel_radius,
                 handle_grip_offset,
                 handle_grip_y_scale,
+                mirrored_v,
             )),
             guard(
                 x.clone(),
@@ -288,79 +297,88 @@ fn blade_scale_decrease(
     blade_left_top_slope: f64,
     blade_right_top_slope: f64,
     blade_height: f64,
-    blade_scale_decrement: f64,
+    blade_scale_front_left_decrement: f64,
+    blade_scale_front_right_decrement: f64,
+    blade_scale_back_left_decrement: f64,
+    blade_scale_back_right_decrement: f64,
 ) -> Tree {
     Tree::max(
         &Tree::max(
-        &Tree::max(
-        &Tree::max(
-        &Tree::max(
-            &blade(
-                x.clone(),
-                y.clone(),
-                z.clone(),
-                blade_radius,
-                blade_back_width,
-                blade_front_width,
-                blade_left_top_slope,
-                blade_right_top_slope,
-                blade_height,
-            ),
-            -Tree::min(
-                &(blade_scale_v_decrease_modifier(
-                    x.clone(),
-                    -z.clone(),
-                    blade_radius,
-                    blade_scale_decrement,
-                )),
-                Tree::min(
-                    &(blade_scale_v_decrease_modifier(
-                        x.clone(),
-                        z.clone(),
-                        blade_radius,
-                        blade_scale_decrement,
-                    )),
-                    Tree::min(
-                        &(blade_scale_v_decrease_modifier(
-                            -x.clone(),
+            &Tree::max(
+                &Tree::max(
+                    &Tree::max(
+                        &blade(
+                            x.clone(),
+                            y.clone(),
                             z.clone(),
                             blade_radius,
-                            blade_scale_decrement,
-                        )),
-                        blade_scale_v_decrease_modifier(
-                            -x.clone(),
-                            -z.clone(),
-                            blade_radius,
-                            blade_scale_decrement,
+                            blade_back_width,
+                            blade_front_width,
+                            blade_left_top_slope,
+                            blade_right_top_slope,
+                            blade_height,
+                        ),
+                        -Tree::min(
+                            &(blade_scale_v_decrease_modifier(
+                                x.clone(),
+                                -z.clone(),
+                                blade_radius,
+                                blade_scale_back_right_decrement,
+                            )),
+                            Tree::min(
+                                &(blade_scale_v_decrease_modifier(
+                                    x.clone(),
+                                    z.clone(),
+                                    blade_radius,
+                                    blade_scale_back_left_decrement,
+                                )),
+                                Tree::min(
+                                    &(blade_scale_v_decrease_modifier(
+                                        -x.clone(),
+                                        z.clone(),
+                                        blade_radius,
+                                        blade_scale_front_left_decrement,
+                                    )),
+                                    blade_scale_v_decrease_modifier(
+                                        -x.clone(),
+                                        -z.clone(),
+                                        blade_radius,
+                                        blade_scale_front_right_decrement,
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
+                    blade_scale_d_decrease_modifier(
+                        x.clone() * blade_right_top_slope,
+                        y.clone(),
+                        z.clone() * blade_right_top_slope,
+                        blade_height,
+                        blade_scale_back_left_decrement,
+                    ),
                 ),
+                blade_scale_d_decrease_modifier(
+                    -x.clone() * blade_right_top_slope,
+                    y.clone(),
+                    z.clone() * blade_right_top_slope,
+                    blade_height,
+                    blade_scale_front_left_decrement,
+                ),
+            ),
+            blade_scale_d_decrease_modifier(
+                x.clone() * blade_left_top_slope,
+                y.clone(),
+                -z.clone() * blade_left_top_slope,
+                blade_height,
+                blade_scale_back_right_decrement,
             ),
         ),
         blade_scale_d_decrease_modifier(
-            x.clone()*blade_right_top_slope,
+            -x.clone() * blade_left_top_slope,
             y.clone(),
-            z.clone()*blade_right_top_slope,
+            -z.clone() * blade_left_top_slope,
             blade_height,
-            blade_scale_decrement,
-        )),blade_scale_d_decrease_modifier(
-            -x.clone()*blade_right_top_slope,
-            y.clone(),
-            z.clone()*blade_right_top_slope,
-            blade_height,
-            blade_scale_decrement,
-        )),blade_scale_d_decrease_modifier(
-            x.clone()*blade_left_top_slope,
-            y.clone(),
-            -z.clone()*blade_left_top_slope,
-            blade_height,
-            blade_scale_decrement,
-        )),blade_scale_d_decrease_modifier(
-            -x.clone()*blade_left_top_slope,
-            y.clone(),
-            -z.clone()*blade_left_top_slope,
-            blade_height,
-            blade_scale_decrement,
+            blade_scale_front_right_decrement,
         ),
     )
 }
@@ -410,42 +428,133 @@ fn blade_and_guard(
     blade_left_top_slope: f64,
     blade_radius: f64,
     blade_right_top_slope: f64,
-    blade_scale_decrement: f64,
+    blade_scale_back_left_decrement: f64,
+    blade_scale_back_right_decrement: f64,
+    blade_scale_front_left_decrement: f64,
+    blade_scale_front_right_decrement: f64,
     blade_height: f64,
+    mirrored_v: bool,
 ) -> Tree {
-    -Tree::min(
-        &(handle_and_guard(
-            x.clone(),
-            y.clone(),
-            z.clone(),
-            pommel_extension,
-            pommel_radius,
-            guard_back_stop,
-            guard_bottom,
-            guard_effect_radius,
-            guard_front_stop,
-            guard_left_stop,
-            guard_right_stop,
-            guard_x_offset,
-            guard_x_scale,
-            guard_z_offset,
-            guard_z_scale,
-            handle_bottom_limit,
-            handle_radius,
-            handle_grip_offset,
-            handle_grip_y_scale,
-        )),
-        blade_scale_decrease(
-            x.clone(),
-            y.clone() - blade_bottom,
-            z.clone(),
-            blade_radius,
-            blade_back_width,
-            blade_front_width,
-            blade_left_top_slope,
-            blade_right_top_slope,
-            blade_height,
-            blade_scale_decrement,
-        ),
-    )
+    if mirrored_v {
+        -Tree::min(
+            &(Tree::min(
+                &(handle_and_guard(
+                    x.clone(),
+                    y.clone(),
+                    z.clone(),
+                    pommel_extension,
+                    pommel_radius,
+                    guard_back_stop,
+                    guard_bottom,
+                    guard_effect_radius,
+                    guard_front_stop,
+                    guard_left_stop,
+                    guard_right_stop,
+                    guard_x_offset,
+                    guard_x_scale,
+                    guard_z_offset,
+                    guard_z_scale,
+                    handle_bottom_limit,
+                    handle_radius,
+                    handle_grip_offset,
+                    handle_grip_y_scale,
+                    mirrored_v,
+                )),
+                blade_scale_decrease(
+                    x.clone(),
+                    y.clone() - blade_bottom,
+                    z.clone(),
+                    blade_radius,
+                    blade_back_width,
+                    blade_front_width,
+                    blade_left_top_slope,
+                    blade_right_top_slope,
+                    blade_height,
+                    blade_scale_front_left_decrement,
+                    blade_scale_front_right_decrement,
+                    blade_scale_back_left_decrement,
+                    blade_scale_back_right_decrement,
+                ),
+            )),
+            Tree::min(
+                &(handle_and_guard(
+                    x.clone(),
+                    2.0 * handle_bottom_limit - y.clone(),
+                    2.0 * 0.0 - z.clone(),
+                    pommel_extension,
+                    pommel_radius,
+                    guard_back_stop,
+                    guard_bottom,
+                    guard_effect_radius,
+                    guard_front_stop,
+                    guard_left_stop,
+                    guard_right_stop,
+                    guard_x_offset,
+                    guard_x_scale,
+                    guard_z_offset,
+                    guard_z_scale,
+                    handle_bottom_limit,
+                    handle_radius,
+                    handle_grip_offset,
+                    handle_grip_y_scale,
+                    mirrored_v,
+                )),
+                blade_scale_decrease(
+                    x.clone(),
+                    2.0 * handle_bottom_limit - (y.clone() + blade_bottom),
+                    2.0 * 0.0 - z.clone(),
+                    blade_radius,
+                    blade_back_width,
+                    blade_front_width,
+                    blade_left_top_slope,
+                    blade_right_top_slope,
+                    blade_height,
+                    blade_scale_front_left_decrement,
+                    blade_scale_front_right_decrement,
+                    blade_scale_back_left_decrement,
+                    blade_scale_back_right_decrement,
+                ),
+            ),
+        )
+    } else {
+        -Tree::min(
+            &(handle_and_guard(
+                x.clone(),
+                y.clone(),
+                z.clone(),
+                pommel_extension,
+                pommel_radius,
+                guard_back_stop,
+                guard_bottom,
+                guard_effect_radius,
+                guard_front_stop,
+                guard_left_stop,
+                guard_right_stop,
+                guard_x_offset,
+                guard_x_scale,
+                guard_z_offset,
+                guard_z_scale,
+                handle_bottom_limit,
+                handle_radius,
+                handle_grip_offset,
+                handle_grip_y_scale,
+                mirrored_v,
+            )),
+            blade_scale_decrease(
+                x.clone(),
+                y.clone() - blade_bottom,
+                z.clone(),
+                blade_radius,
+                blade_back_width,
+                blade_front_width,
+                blade_left_top_slope,
+                blade_right_top_slope,
+                blade_height,
+                blade_scale_front_left_decrement,
+                blade_scale_front_right_decrement,
+                blade_scale_back_left_decrement,
+                blade_scale_back_right_decrement,
+            ),
+        )
+    }
 }

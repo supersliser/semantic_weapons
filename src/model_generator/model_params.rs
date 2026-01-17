@@ -1,5 +1,7 @@
 #[derive(Clone, Copy)]
 pub struct ModelParams {
+    pub v_mirrored: bool,
+
     pub pommel_extension: f64,
     pub pommel_radius: f64,
 
@@ -25,13 +27,17 @@ pub struct ModelParams {
     pub blade_back_width: f64,
     pub blade_left_top_slope: f64,
     pub blade_right_top_slope: f64,
-    pub blade_scale_decrement: f64,
+    pub blade_scale_front_left_decrement: f64,
+    pub blade_scale_front_right_decrement: f64,
+    pub blade_scale_back_left_decrement: f64,
+    pub blade_scale_back_right_decrement: f64,
     pub blade_height: f64,
 }
 
 impl Default for ModelParams {
     fn default() -> Self {
         ModelParams {
+            v_mirrored: false,
             pommel_extension: 4.5,
             pommel_radius: -3.5,
             handle_bottom_limit: 5.5,
@@ -54,7 +60,10 @@ impl Default for ModelParams {
             blade_back_width: 1.0,
             blade_left_top_slope: 2.0,
             blade_right_top_slope: 2.0,
-            blade_scale_decrement: 2.0,
+            blade_scale_front_left_decrement: 2.0,
+            blade_scale_front_right_decrement: 2.0,
+            blade_scale_back_left_decrement: 2.0,
+            blade_scale_back_right_decrement: 2.0,
             blade_height: 25.0,
         }
     }

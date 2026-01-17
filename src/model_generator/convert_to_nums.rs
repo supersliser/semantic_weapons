@@ -1,3 +1,4 @@
+use super::utils::*;
 use crate::{
     model_generator::model_params::ModelParams,
     weapon_params::{BladeLength, BladeWidth},
@@ -11,7 +12,7 @@ impl ModelParams {
                 self.blade_left_top_slope *= 2.0;
                 self.blade_right_top_slope *= 2.0;
                 self.blade_radius /= 3.0;
-                self.blade_scale_decrement /= 2.0;
+                self.set_blade_scale_decrement(self.get_blade_scale_decrement() / 2.0);
                 self.blade_front_width /= 2.0;
                 self.blade_back_width /= 2.0;
                 self.handle_radius /= 4.0;
@@ -30,7 +31,8 @@ impl ModelParams {
             BladeLength::Long => {
                 self.blade_height *= 2.0;
                 self.handle_radius *= 1.5;
-                self.blade_scale_decrement *= 1.25;
+                self.set_blade_scale_decrement(self.get_blade_scale_decrement() * 1.25);
+                self.handle_bottom_limit *= -0.75;
             }
             BladeLength::Great => {
                 self.blade_height *= 4.0;
@@ -51,7 +53,7 @@ impl ModelParams {
                 self.blade_radius /= 3.0;
                 self.blade_front_width /= 2.0;
                 self.blade_back_width /= 2.0;
-                self.blade_scale_decrement *= 2.0;
+                self.set_blade_scale_decrement(self.get_blade_scale_decrement() * 2.0);
                 self.blade_left_top_slope *= 2.0;
                 self.blade_right_top_slope *= 2.0;
                 self.guard_z_offset /= 1.0;
@@ -72,7 +74,7 @@ impl ModelParams {
                 self.blade_radius *= 5.0;
                 self.blade_back_width *= 1.5;
                 self.blade_front_width *= 1.5;
-                self.blade_scale_decrement *= 4.0;
+                self.set_blade_scale_decrement(self.get_blade_scale_decrement() * 4.0);
                 self.blade_left_top_slope *= 1.25;
                 self.blade_right_top_slope *= 1.25;
                 self.guard_z_offset *= 1.0;
@@ -94,13 +96,26 @@ impl ModelParams {
     pub fn set_blade_count(&mut self, value: u8) {
         match value {
             1 => {
-                self.blade_left_top_slope *= 1.0;
-                self.blade_right_top_slope /= 1.0;
-                self.guard_right_stop /= 2.0;
-                self.blade_back_width /= 10.0;
-                self.blade_front_width *= 10.0;
+                self.blade_left_top_slope = 0.0;
+                self.blade_right_top_slope *= 2.0;
+                self.blade_scale_front_left_decrement = 0.0;
+                self.blade_scale_back_left_decrement = 0.0;
+                self.blade_scale_back_right_decrement *= 1.5;
+                self.blade_scale_front_right_decrement *= 1.5;
+                self.blade_front_width /= 3.0;
+                self.blade_back_width /= 3.0;
+                self.guard_right_stop /= 1.5;
+                self.guard_left_stop /= 2.0;
             }
-            4 => {}
+            4 => {
+                self.v_mirrored = true;
+                if self.handle_bottom_limit < 0.0 {
+                    self.handle_bottom_limit *= 2.0;
+                }
+                else {
+                    self.handle_bottom_limit *= 0.5;
+                }
+            }
             _ => {}
         }
     }
