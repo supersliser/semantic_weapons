@@ -4,22 +4,26 @@ use fidget::{
     mesh::{Octree, Settings},
 };
 use nalgebra::Matrix4;
-use semantic_weapons::model_generator::{create_basic_weapon, model_params::ModelParams};
+use semantic_weapons::{
+    model_generator::{create_basic_weapon, model_params::ModelParams},
+    weapon_params::{BladeLength, BladeWidth},
+};
 
 use std::{env, time::SystemTime};
 
 fn main() {
-
     let start = SystemTime::now();
 
-    let mut quality: u8 = 0;
+    let mut quality: u8 = 10;
+    let mut blade_length = BladeLength::Medium;
+    let mut blade_width = BladeWidth::Standard;
+    let mut bladed_edge_count: u8 = 2;
+    let mut has_guard = true;
 
     let args: Vec<String> = env::args().collect();
-
     if args.iter().count() <= 1 {
         panic!("Please make sure to provide arguements")
     }
-
     for arg in 0..args.iter().count() - 1 {
         match args[arg].as_str() {
             "-quality" => {
@@ -37,6 +41,90 @@ fn main() {
                 }
                 quality = args[arg + 1].parse::<u8>().unwrap();
             }
+            "-blade-length" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a blade-length value, valid options are Short, Medium, Long and Great"
+                    )
+                }
+                match args[arg + 1].to_lowercase().as_str() {
+                    "short" => {
+                        blade_length = BladeLength::Short;
+                    }
+                    "medium" => {
+                        blade_length = BladeLength::Medium;
+                    }
+                    "long" => {
+                        blade_length = BladeLength::Long;
+                    }
+                    "great" => {
+                        blade_length = BladeLength::Great;
+                    }
+                    _ => {
+                        panic!(
+                            "Please provide a blade-length value, valid options are Short, Medium, Long and Great"
+                        )
+                    }
+                }
+            }
+            "-blade-width" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a blade-width value, valid options are Narrow, Standard, Wide"
+                    )
+                }
+                match args[arg + 1].to_lowercase().as_str() {
+                    "narrow" => {
+                        blade_width = BladeWidth::Narrow;
+                    }
+                    "standard" => {
+                        blade_width = BladeWidth::Standard;
+                    }
+                    "wide" => {
+                        blade_width = BladeWidth::Wide;
+                    }
+                    _ => {
+                        panic!(
+                            "Please provide a blade-width value, valid options are Narrow, Standard, Wide"
+                        )
+                    }
+                }
+            }
+            "-bladed-edge-count" => {
+                if arg + 1 > args.iter().count() {
+                    panic!("Please provide an edge count, valid numbers are 1, 2 or 4")
+                }
+                if args[arg + 1].parse::<u8>().is_err()
+                    || args[arg + 1].parse::<u8>().ok() < Some(1)
+                    || args[arg + 1].parse::<u8>().ok() > Some(4)
+                    || args[arg + 1].parse::<u8>().ok() == Some(3)
+                {
+                    panic!(
+                        "Invalid input: Please provide a quality number between 1 and 255 inclusively"
+                    )
+                }
+                bladed_edge_count = args[arg + 1].parse::<u8>().unwrap();
+            }
+            "-has-guard" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a boolean for if the weapon should have a guard, valid options are true or false"
+                    )
+                }
+                match args[arg + 1].to_lowercase().as_str() {
+                    "true" => {
+                        has_guard = true;
+                    }
+                    "false" => {
+                        has_guard = false;
+                    }
+                    _ => {
+                        panic!(
+                            "Please provide a boolean for if the weapon should have a guard, valid options are true or false"
+                        )
+                    }
+                }
+            }
             _ => {
                 continue;
             }
@@ -44,10 +132,10 @@ fn main() {
     }
 
     let mut params = ModelParams::default();
-    params.set_blade_length(semantic_weapons::weapon_params::BladeLength::Long);
-    params.set_blade_width(semantic_weapons::weapon_params::BladeWidth::Standard);
-    params.set_blade_count(1);
-    params.set_has_guard(false);
+    params.set_blade_length(blade_length);
+    params.set_blade_width(blade_width);
+    params.set_blade_count(bladed_edge_count);
+    params.set_has_guard(has_guard);
     let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z(), params);
 
     //scaling shape to fit inside bounding box (1, 1, 1)
@@ -74,5 +162,8 @@ fn main() {
     mesh.write_stl(&mut f).unwrap();
 
     //speed should on average be on a 4x multiplier where x = detail-1. detail level 10 = ~4 secs
-    println!("Mesh written after: {} secs", start.elapsed().unwrap().as_secs());
+    println!(
+        "Mesh written after: {} secs",
+        start.elapsed().unwrap().as_secs()
+    );
 }
