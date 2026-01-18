@@ -1,3 +1,4 @@
+
 use super::utils::*;
 use crate::{
     model_generator::model_params::ModelParams,
@@ -117,6 +118,14 @@ impl ModelParams {
                 }
             }
             _ => {}
+        }
+    }
+
+    pub fn set_has_guard(&mut self, value: bool) {
+        if value {
+
+        } else {
+            self.guard_bottom = (2.0 as f64).powf(63.0);
         }
     }
 }

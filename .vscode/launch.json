@@ -1,0 +1,90 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug unit tests in library 'semantic_weapons'",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test"
+                ]
+            }
+        },
+        {
+            "name": "Debug executable 'ai'",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=ai"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Debug unit tests in executable 'ai'",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--bin=ai"
+                ]
+            }
+        },
+        {
+            "name": "Debug executable 'semantic_weapons'",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=semantic_weapons"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Debug unit tests in executable 'semantic_weapons'",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--bin=semantic_weapons"
+                ]
+            }
+        },
+        {
+            "name": "Debug executable 'weapon_generator'",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=weapon_generator",
+                    "--",
+                    "-quality",
+                    "12"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Debug unit tests in executable 'weapon_generator'",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--bin=weapon_generator"
+                ]
+            }
+        }
+    ]
+}
