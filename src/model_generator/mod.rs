@@ -1,7 +1,7 @@
 pub mod convert_to_nums;
 pub mod model_params;
 mod utils;
-use fidget::context::Tree;
+use fidget::{context::Tree, eval::MathFunction};
 
 use crate::model_generator::model_params::ModelParams;
 
@@ -38,6 +38,9 @@ pub fn create_basic_weapon(x: Tree, y: Tree, z: Tree, params: ModelParams) -> Tr
         params.blade_scale_front_right_decrement,
         params.blade_height,
         params.v_mirrored,
+        params.blade_curvature,
+        params.blade_lean,
+        params.blade_curve_shift,
     )
 }
 
@@ -246,14 +249,24 @@ fn blade(
     blade_left_top_slope: f64,
     blade_right_top_slope: f64,
     blade_height: f64,
+    blade_curvature: f64,
+    blade_lean: f64,
+    blade_curve_shift: f64,
 ) -> Tree {
-    ((x.clone() * x.clone()) + (z.clone() * z.clone()) - blade_radius)
+    let z_curved = apply_curvature(
+        y.clone(),
+        z.clone(),
+        blade_curvature,
+        blade_lean,
+        blade_curve_shift,
+    );
+    ((x.clone() * x.clone()) + (z_curved.clone() * z_curved.clone()) - blade_radius)
         .max(-y.clone())
         .max(-(-y.clone() + blade_height))
         .max(-(x.clone() + blade_back_width))
         .max(-(-x.clone() + blade_front_width))
-        .max(-(z.clone() * blade_left_top_slope + -(y.clone() - blade_height)))
-        .max(-(-z.clone() * blade_right_top_slope + -(y.clone() - blade_height)))
+        .max(-(z_curved.clone() * blade_left_top_slope - (y.clone() - blade_height)))
+        .max(-(-z_curved.clone() * blade_right_top_slope - (y.clone() - blade_height)))
 }
 
 fn blade_scale_decrease(
@@ -270,7 +283,17 @@ fn blade_scale_decrease(
     blade_scale_front_right_decrement: f64,
     blade_scale_back_left_decrement: f64,
     blade_scale_back_right_decrement: f64,
+    blade_curvature: f64,
+    blade_lean: f64,
+    blade_curve_shift: f64,
 ) -> Tree {
+    let z_curved = apply_curvature(
+        y.clone(),
+        z.clone(),
+        blade_curvature,
+        blade_lean,
+        blade_curve_shift,
+    );
     blade(
         x.clone(),
         y.clone(),
@@ -281,31 +304,34 @@ fn blade_scale_decrease(
         blade_left_top_slope,
         blade_right_top_slope,
         blade_height,
+        blade_curvature,
+        blade_lean,
+        blade_curve_shift,
     )
     .max(
         -(blade_scale_v_decrease_modifier(
             x.clone(),
-            -z.clone(),
+            -z_curved.clone(),
             blade_radius,
             blade_scale_back_right_decrement,
         )
         .min(
             blade_scale_v_decrease_modifier(
                 x.clone(),
-                z.clone(),
+                z_curved.clone(),
                 blade_radius,
                 blade_scale_back_left_decrement,
             )
             .min(
                 blade_scale_v_decrease_modifier(
                     -x.clone(),
-                    z.clone(),
+                    z_curved.clone(),
                     blade_radius,
                     blade_scale_front_left_decrement,
                 )
                 .min(blade_scale_v_decrease_modifier(
                     -x.clone(),
-                    -z.clone(),
+                    -z_curved.clone(),
                     blade_radius,
                     blade_scale_front_right_decrement,
                 )),
@@ -315,28 +341,28 @@ fn blade_scale_decrease(
     .max(blade_scale_d_decrease_modifier(
         x.clone() * blade_right_top_slope,
         y.clone(),
-        z.clone() * blade_right_top_slope,
+        z_curved.clone(),
         blade_height,
         blade_scale_back_left_decrement,
     ))
     .max(blade_scale_d_decrease_modifier(
         -x.clone() * blade_right_top_slope,
         y.clone(),
-        z.clone() * blade_right_top_slope,
+        z_curved.clone(),
         blade_height,
         blade_scale_front_left_decrement,
     ))
     .max(blade_scale_d_decrease_modifier(
         x.clone() * blade_left_top_slope,
         y.clone(),
-        -z.clone() * blade_left_top_slope,
+        -z_curved.clone(),
         blade_height,
         blade_scale_back_right_decrement,
     ))
     .max(blade_scale_d_decrease_modifier(
         -x.clone() * blade_left_top_slope,
         y.clone(),
-        -z.clone() * blade_left_top_slope,
+        -z_curved.clone(),
         blade_height,
         blade_scale_front_right_decrement,
     ))
@@ -353,12 +379,23 @@ fn blade_scale_v_decrease_modifier(
 
 fn blade_scale_d_decrease_modifier(
     x: Tree,
-    y: Tree,
+    y: Tree, // This represents the vertical height
     z: Tree,
     blade_height: f64,
     blade_scale_decrement: f64,
 ) -> Tree {
     x.clone() * blade_scale_decrement + y.clone() - blade_height + z.clone() * blade_scale_decrement
+}
+
+fn apply_curvature(
+    y: Tree,
+    z: Tree,
+    blade_curvature: f64,
+    blade_lean: f64,
+    blade_curve_shift: f64,
+) -> Tree {
+    let curve_shape = ((y / blade_lean) + blade_curve_shift).pow(2) - blade_curve_shift.powf(2.0);
+    z + curve_shape * blade_curvature
 }
 
 fn blade_and_guard(
@@ -393,7 +430,14 @@ fn blade_and_guard(
     blade_scale_front_right_decrement: f64,
     blade_height: f64,
     mirrored_v: bool,
+    blade_curvature: f64,
+    blade_lean: f64,
+    blade_curve_shift: f64,
 ) -> Tree {
+    let blade_left_shift =
+        (blade_scale_back_left_decrement + blade_scale_front_left_decrement) / 20.0;
+    let blade_right_shift =
+        (blade_scale_back_right_decrement + blade_scale_front_right_decrement) / 20.0;
     if mirrored_v {
         -handle_and_guard(
             x.clone(),
@@ -420,7 +464,7 @@ fn blade_and_guard(
         .min(blade_scale_decrease(
             x.clone(),
             y.clone() - blade_bottom,
-            z.clone(),
+            z.clone() - blade_right_shift + blade_left_shift,
             blade_radius,
             blade_back_width,
             blade_front_width,
@@ -431,6 +475,9 @@ fn blade_and_guard(
             blade_scale_front_right_decrement,
             blade_scale_back_left_decrement,
             blade_scale_back_right_decrement,
+            blade_curvature,
+            blade_lean,
+            blade_curve_shift,
         ))
         .min(
             handle_and_guard(
@@ -458,7 +505,7 @@ fn blade_and_guard(
             .min(blade_scale_decrease(
                 x.clone(),
                 2.0 * handle_bottom_limit - (y.clone() + blade_bottom),
-                2.0 * 0.0 - z.clone(),
+                2.0 * 0.0 - z.clone() - blade_right_shift + blade_left_shift,
                 blade_radius,
                 blade_back_width,
                 blade_front_width,
@@ -469,6 +516,9 @@ fn blade_and_guard(
                 blade_scale_front_right_decrement,
                 blade_scale_back_left_decrement,
                 blade_scale_back_right_decrement,
+                blade_curvature,
+                blade_lean,
+                blade_curve_shift,
             )),
         )
     } else {
@@ -497,7 +547,7 @@ fn blade_and_guard(
         .min(blade_scale_decrease(
             x.clone(),
             y.clone() - blade_bottom,
-            z.clone(),
+            z.clone() - blade_right_shift + blade_left_shift,
             blade_radius,
             blade_back_width,
             blade_front_width,
@@ -508,6 +558,9 @@ fn blade_and_guard(
             blade_scale_front_right_decrement,
             blade_scale_back_left_decrement,
             blade_scale_back_right_decrement,
+            blade_curvature,
+            blade_lean,
+            blade_curve_shift,
         ))
     }
 }

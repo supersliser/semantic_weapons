@@ -101,10 +101,10 @@ impl ModelParams {
                 self.blade_right_top_slope *= 2.0;
                 self.blade_scale_front_left_decrement = 0.0;
                 self.blade_scale_back_left_decrement = 0.0;
-                self.blade_scale_back_right_decrement *= 1.5;
-                self.blade_scale_front_right_decrement *= 1.5;
-                self.blade_front_width /= 3.0;
-                self.blade_back_width /= 3.0;
+                self.blade_scale_back_right_decrement *= 3.0;
+                self.blade_scale_front_right_decrement *= 3.0;
+                self.blade_front_width /= 1.5;
+                self.blade_back_width /= 1.5;
                 self.guard_right_stop /= 1.5;
                 self.guard_left_stop /= 2.0;
             }
