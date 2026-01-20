@@ -27,6 +27,7 @@ pub struct ModelParams {
     pub guard_bar_left_offset: f64,
     pub guard_bar_right_offset: f64,
     pub guard_bar_radius: f64,
+    pub guard_bar_curves_back: bool,
 
     pub blade_bottom: f64,
     pub blade_radius: f64,
@@ -68,6 +69,7 @@ impl Default for ModelParams {
             guard_bar_left_offset: 0.0,
             guard_bar_right_offset: 0.0,
             guard_bar_radius: 0.1,
+            guard_bar_curves_back: true,
             blade_bottom: 15.0,
             blade_radius: 5.0,
             blade_front_width: 1.0,

@@ -1,6 +1,5 @@
 pub mod convert_to_nums;
 pub mod model_params;
-use candle_core::quantized::k_quants;
 use fidget::{context::Tree, eval::MathFunction};
 
 use crate::model_generator::model_params::ModelParams;
@@ -45,6 +44,7 @@ pub fn create_basic_weapon(x: Tree, y: Tree, z: Tree, params: ModelParams) -> Tr
         params.guard_bar_left_offset,
         params.guard_bar_radius,
         params.guard_bar_right_offset,
+        params.guard_bar_curves_back
     )
 }
 
@@ -132,14 +132,16 @@ fn guard_bar(
     guard_bar_left_offset: f64,
     guard_bar_right_offset: f64,
     guard_bar_radius: f64,
+    guard_bar_curves_back: bool
 ) -> Tree {
     let mut x = ix;
     let mut z = iz;
-    x += guard_bar_front_offset;
+    x += Tree::min(&y.clone(), guard_bar_front_offset);
     x -= guard_bar_back_offset;
     z += guard_bar_left_offset;
     z -= guard_bar_right_offset;
-    (x.clone() * x.clone() + z.clone() * z.clone() - guard_bar_radius).max(-guard_bottom)
+    let mut bar = (x.clone() * x.clone() + z.clone() * z.clone() - guard_bar_radius).max(-guard_bottom);
+    bar
 }
 
 fn guard_shape(
@@ -183,6 +185,7 @@ fn guard(
     guard_bar_left_offset: f64,
     guard_bar_radius: f64,
     guard_bar_right_offset: f64,
+    guard_bar_curves_back: bool
 ) -> Tree {
     guard_shape(
         x.clone(),
@@ -224,6 +227,7 @@ fn guard(
         guard_bar_left_offset,
         guard_bar_right_offset,
         guard_bar_radius,
+        guard_bar_curves_back
     ))
 }
 
@@ -253,6 +257,7 @@ fn handle_and_guard(
     guard_bar_left_offset: f64,
     guard_bar_radius: f64,
     guard_bar_right_offset: f64,
+    guard_bar_curves_back: bool
 ) -> Tree {
     handle(
         x.clone(),
@@ -285,6 +290,7 @@ fn handle_and_guard(
         guard_bar_left_offset,
         guard_bar_radius,
         guard_bar_right_offset,
+        guard_bar_curves_back
     ))
     .max(0.0 - (15.0 - y.clone()) + 0)
 }
@@ -466,6 +472,7 @@ fn blade_and_guard(
     guard_bar_left_offset: f64,
     guard_bar_radius: f64,
     guard_bar_right_offset: f64,
+    guard_bar_curves_back: bool
 ) -> Tree {
     let blade_left_shift =
         (blade_scale_back_left_decrement + blade_scale_front_left_decrement) / 20.0;
@@ -498,6 +505,7 @@ fn blade_and_guard(
             guard_bar_left_offset,
             guard_bar_radius,
             guard_bar_right_offset,
+            guard_bar_curves_back
         )
         .min(blade_scale_decrease(
             x.clone(),
@@ -543,6 +551,7 @@ fn blade_and_guard(
                 guard_bar_left_offset,
                 guard_bar_radius,
                 guard_bar_right_offset,
+                guard_bar_curves_back
             )
             .min(blade_scale_decrease(
                 x.clone(),
@@ -589,6 +598,7 @@ fn blade_and_guard(
             guard_bar_left_offset,
             guard_bar_radius,
             guard_bar_right_offset,
+            guard_bar_curves_back
         )
         .min(blade_scale_decrease(
             x.clone(),
