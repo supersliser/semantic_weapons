@@ -71,12 +71,12 @@
                     "--",
                     "-quality",
                     "10",
-                    "-blade-width",
-                    "wide",
-                    "-bladed-edge-count",
-                    "1",
-                    "-blade-direction",
-                    "right",
+                    // "-blade-width",
+                    // "wide",
+                    // "-bladed-edge-count",
+                    // "1",
+                    // "-blade-direction",
+                    // "right",
                 ]
             },
             "args": []
