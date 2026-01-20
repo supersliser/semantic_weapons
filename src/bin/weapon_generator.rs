@@ -6,9 +6,10 @@ use fidget::{
 use nalgebra::Matrix4;
 use semantic_weapons::{
     model_generator::{create_basic_weapon, model_params::ModelParams},
-    weapon_params::{BladeLength, BladeWidth},
+    weapon_params::{BladeLength, BladeWidth, Direction},
 };
 
+use core::num;
 use std::{env, time::SystemTime};
 
 fn main() {
@@ -19,6 +20,8 @@ fn main() {
     let mut blade_width = BladeWidth::Standard;
     let mut bladed_edge_count: u8 = 2;
     let mut has_guard = true;
+    let mut blade_direction = Direction::Central;
+    let mut blade_angle = 0;
 
     let args: Vec<String> = env::args().collect();
     if args.iter().count() <= 1 {
@@ -125,17 +128,66 @@ fn main() {
                     }
                 }
             }
+            "-blade-direction" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a direction for the curve of the blade, valid options are left, central or right"
+                    )
+                }
+                match args[arg + 1].to_lowercase().as_str() {
+                    "left" => {
+                        blade_direction = Direction::Left;
+                    }
+                    "right" => {
+                        blade_direction = Direction::Right;
+                    }
+                    "central" => {
+                        blade_direction = Direction::Central;
+                    }
+                    _ => {
+                        panic!(
+                            "Please provide a valid direction for the blade, either left, central or right"
+                        )
+                    }
+                }
+            }
+            "-blade-bend" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a number for the curve of the blade, valid options are between 0 and 90"
+                    )
+                }
+                if args[arg + 1].parse::<u8>().is_err()
+                    || args[arg + 1].parse::<u8>().ok().is_none()
+                {
+                    panic!("Please provide a number between 0 and 90")
+                }
+                let num_arg = args[arg + 1].parse::<u8>().ok().unwrap();
+                if num_arg > 90 {
+                    panic!("Please provide a number between 0 and 90")
+                }
+                blade_angle = num_arg;
+            }
             _ => {
                 continue;
             }
         }
     }
 
+    if (blade_direction == Direction::Central && blade_angle != 0)
+        || (bladed_edge_count == 1 && blade_direction == Direction::Central)
+    {
+        panic!(
+            "You have provided a parameter that requires the -blade-direction argument, please provide this data as either left or right"
+        );
+    }
+
     let mut params = ModelParams::default();
     params.set_blade_length(blade_length);
-    params.set_blade_width(blade_width);
-    params.set_blade_count(bladed_edge_count);
+    params.set_blade_width(blade_width, blade_direction);
+    params.set_blade_count(blade_direction, bladed_edge_count);
     params.set_has_guard(has_guard);
+    params.set_blade_curvature(blade_direction, blade_angle);
     let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z(), params);
 
     //scaling shape to fit inside bounding box (1, 1, 1)

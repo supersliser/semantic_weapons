@@ -36,7 +36,6 @@ pub struct ModelParams {
     pub blade_height: f64,
     pub blade_curvature: f64,
     pub blade_lean: f64,
-    pub blade_curve_shift: f64
 }
 
 impl Default for ModelParams {
@@ -70,9 +69,8 @@ impl Default for ModelParams {
             blade_scale_back_left_decrement: 2.0,
             blade_scale_back_right_decrement: 2.0,
             blade_height: 25.0,
-            blade_curvature: 20.0,
-            blade_lean: 60.0,
-            blade_curve_shift: 0.0,
+            blade_curvature: -20.0,
+            blade_lean: 0.0,
         }
     }
 }

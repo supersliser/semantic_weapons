@@ -33,6 +33,7 @@ pub enum GuardCoverage {
     Enclosed,
 }
 
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Direction {
     Left,
     Central,
@@ -61,5 +62,12 @@ pub enum WeaponMaterial {
 
 pub enum TimePeriod {
     Neanderthal,
-    Classical
+    Classical,
+    Medieval,
+    Crusador,
+    Colonial,
+    Industrial,
+    SpaceAge,
+    Contempary,
+    SciFi
 }
