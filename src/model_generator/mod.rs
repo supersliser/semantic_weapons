@@ -1,6 +1,6 @@
 pub mod convert_to_nums;
 pub mod model_params;
-use fidget::{context::Tree, eval::MathFunction};
+use fidget::context::Tree;
 
 use crate::model_generator::model_params::ModelParams;
 
@@ -104,7 +104,7 @@ fn handle(
         handle_bottom_limit,
     );
     if !mirrored_v {
-        let mut extension = (6.0) - pommel_extension;
+        let extension = (6.0) - pommel_extension;
         handle = handle.min(handle_pommel(
             x.clone(),
             y.clone() - extension,
@@ -129,7 +129,7 @@ fn guard_bar(
     ix: Tree,
     iy: Tree,
     iz: Tree,
-    guard_bottom: f64,
+    _guard_bottom: f64,
     guard_front_stop: f64,
     guard_back_stop: f64,
     guard_left_stop: f64,

@@ -1,4 +1,3 @@
-use csgrs::float_types::parry3d::either::Either::Left;
 
 use crate::{
     model_generator::model_params::ModelParams,

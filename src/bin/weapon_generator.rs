@@ -9,7 +9,6 @@ use semantic_weapons::{
     weapon_params::{BladeLength, BladeWidth, Direction},
 };
 
-use core::num;
 use std::{env, time::SystemTime};
 
 fn main() {
