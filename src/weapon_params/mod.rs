@@ -10,7 +10,7 @@ pub struct WeaponParams {
     pub guard_coverage: GuardCoverage,
     pub pommel_material: WeaponMaterial,
     pub blade_material: WeaponMaterial,
-    pub age: f32,
+    // pub age: f32,
     pub ornamental_level: f32,
     pub sharpness: u8,
     pub period: TimePeriod

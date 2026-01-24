@@ -44,7 +44,10 @@ pub fn create_basic_weapon(x: Tree, y: Tree, z: Tree, params: ModelParams) -> Tr
         params.guard_bar_left_offset,
         params.guard_bar_radius,
         params.guard_bar_right_offset,
-        params.guard_bar_curves_back
+        params.guard_bar_curves_back,
+        params.guard_bar_bottom_offset,
+        params.guard_bar_x_scale,
+        params.guard_bar_z_scale
     )
 }
 
@@ -124,23 +127,45 @@ fn handle(
 
 fn guard_bar(
     ix: Tree,
-    y: Tree,
+    iy: Tree,
     iz: Tree,
     guard_bottom: f64,
+    guard_front_stop: f64,
+    guard_back_stop: f64,
+    guard_left_stop: f64,
+    guard_right_stop: f64,
     guard_bar_front_offset: f64,
     guard_bar_back_offset: f64,
     guard_bar_left_offset: f64,
     guard_bar_right_offset: f64,
     guard_bar_radius: f64,
-    guard_bar_curves_back: bool
+    guard_bar_curves_back: bool,
+    guard_bar_bottom_offset: f64,
+    handle_bottom_limit: f64,
+    pommel_extension: f64,
+    guard_bar_x_scale: f64,
+    guard_bar_z_scale: f64
 ) -> Tree {
-    let mut x = ix;
-    let mut z = iz;
-    x += Tree::min(&y.clone(), guard_bar_front_offset);
-    x -= guard_bar_back_offset;
-    z += guard_bar_left_offset;
-    z -= guard_bar_right_offset;
-    let mut bar = (x.clone() * x.clone() + z.clone() * z.clone() - guard_bar_radius).max(-guard_bottom);
+    let mut x = ix.clone();
+    let mut z = iz.clone();
+    let y = iy.clone() - handle_bottom_limit + pommel_extension + guard_bar_bottom_offset;
+    if guard_bar_curves_back {
+        x += Tree::max(&y.clone(), guard_bar_front_offset).min(guard_front_stop);
+        x -= Tree::max(&y.clone(), guard_bar_back_offset).min(guard_back_stop);
+        z += Tree::max(&y.clone(), guard_bar_left_offset).min(guard_left_stop);
+        z -= Tree::max(&y.clone(), guard_bar_right_offset).min(guard_right_stop);
+    } else {
+        // x += Tree::min(&y.clone(), guard_front_stop);
+        // x -= Tree::min(&y.clone(), guard_back_stop);
+        // z += Tree::min(&y.clone(), guard_left_stop);
+        // z -= Tree::min(&y.clone(), guard_right_stop);
+        x += guard_bar_front_offset;
+        x -= guard_bar_back_offset;
+        z += guard_bar_left_offset;
+        z -= guard_bar_right_offset;
+    }
+    let bar = ((x.clone() * x.clone() / guard_bar_x_scale)  + (z.clone() * z.clone() / guard_bar_z_scale) - guard_bar_radius)
+        .max(iy.clone() - handle_bottom_limit);
     bar
 }
 
@@ -185,7 +210,12 @@ fn guard(
     guard_bar_left_offset: f64,
     guard_bar_radius: f64,
     guard_bar_right_offset: f64,
-    guard_bar_curves_back: bool
+    guard_bar_curves_back: bool,
+    handle_bottom_limit: f64,
+    pommel_extension: f64,
+    guard_bar_bottom_offset: f64,
+    guard_bar_x_scale: f64,
+    guard_bar_z_scale: f64,
 ) -> Tree {
     guard_shape(
         x.clone(),
@@ -222,12 +252,21 @@ fn guard(
         y,
         z,
         guard_bottom,
+        guard_front_stop,
+        guard_back_stop,
+        guard_left_stop,
+        guard_right_stop,
         guard_bar_front_offset,
         guard_bar_back_offset,
         guard_bar_left_offset,
         guard_bar_right_offset,
         guard_bar_radius,
-        guard_bar_curves_back
+        guard_bar_curves_back,
+        guard_bar_bottom_offset,
+        handle_bottom_limit,
+        pommel_extension,
+        guard_bar_x_scale,
+        guard_bar_z_scale
     ))
 }
 
@@ -257,7 +296,10 @@ fn handle_and_guard(
     guard_bar_left_offset: f64,
     guard_bar_radius: f64,
     guard_bar_right_offset: f64,
-    guard_bar_curves_back: bool
+    guard_bar_curves_back: bool,
+    guard_bar_bottom_offset: f64,
+    guard_bar_x_scale: f64,
+    guard_bar_z_scale: f64
 ) -> Tree {
     handle(
         x.clone(),
@@ -290,7 +332,12 @@ fn handle_and_guard(
         guard_bar_left_offset,
         guard_bar_radius,
         guard_bar_right_offset,
-        guard_bar_curves_back
+        guard_bar_curves_back,
+        handle_bottom_limit,
+        pommel_extension,
+        guard_bar_bottom_offset,
+        guard_bar_x_scale,
+        guard_bar_z_scale
     ))
     .max(0.0 - (15.0 - y.clone()) + 0)
 }
@@ -472,7 +519,10 @@ fn blade_and_guard(
     guard_bar_left_offset: f64,
     guard_bar_radius: f64,
     guard_bar_right_offset: f64,
-    guard_bar_curves_back: bool
+    guard_bar_curves_back: bool,
+    guard_bar_bottom_offset: f64,
+    guard_bar_x_scale: f64,
+    guard_bar_z_scale: f64
 ) -> Tree {
     let blade_left_shift =
         (blade_scale_back_left_decrement + blade_scale_front_left_decrement) / 20.0;
@@ -505,7 +555,10 @@ fn blade_and_guard(
             guard_bar_left_offset,
             guard_bar_radius,
             guard_bar_right_offset,
-            guard_bar_curves_back
+            guard_bar_curves_back,
+            guard_bar_bottom_offset,
+            guard_bar_x_scale,
+            guard_bar_z_scale
         )
         .min(blade_scale_decrease(
             x.clone(),
@@ -551,7 +604,10 @@ fn blade_and_guard(
                 guard_bar_left_offset,
                 guard_bar_radius,
                 guard_bar_right_offset,
-                guard_bar_curves_back
+                guard_bar_curves_back,
+                guard_bar_bottom_offset,
+                guard_bar_x_scale,
+                guard_bar_z_scale
             )
             .min(blade_scale_decrease(
                 x.clone(),
@@ -598,7 +654,10 @@ fn blade_and_guard(
             guard_bar_left_offset,
             guard_bar_radius,
             guard_bar_right_offset,
-            guard_bar_curves_back
+            guard_bar_curves_back,
+            guard_bar_bottom_offset,
+            guard_bar_x_scale,
+            guard_bar_z_scale
         )
         .min(blade_scale_decrease(
             x.clone(),
