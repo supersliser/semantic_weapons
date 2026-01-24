@@ -120,7 +120,6 @@ impl ModelParams {
                         self.blade_scale_back_right_decrement /= 2.0;
                         self.blade_scale_front_right_decrement /= 2.0;
                     }
-                    _ => {}
                 }
             }
             _ => {}
