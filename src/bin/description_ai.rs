@@ -11,7 +11,6 @@ fn main() {
     let model = ai::load::load_model(&model_path);
     let tokenizer = ai::load::load_tokenizer(&tokenizer_path);
     let prompt = ai::description_prompt::get_full_prompt(character_description);
-    println!("Full prompt: {}", prompt);
     let tokens = ai::run::generate_tokens(prompt, &tokenizer);
     println!("Generated tokens");
     ai::run::generate_json(tokens, model, &tokenizer);

@@ -3670,6 +3670,7 @@ dependencies = [
  "obj",
  "serde",
  "serde_json",
+ "strum",
  "tokenizers",
  "tokio",
 ]

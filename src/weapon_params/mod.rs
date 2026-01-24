@@ -1,3 +1,7 @@
+use serde::Deserialize;
+use strum::IntoStaticStr;
+
+#[derive(Deserialize)]
 pub struct WeaponParams {
     pub blade_length: BladeLength,
     pub blade_width: BladeWidth,
@@ -16,6 +20,7 @@ pub struct WeaponParams {
     pub period: TimePeriod
 }
 
+#[derive(strum::IntoStaticStr, Deserialize)]
 pub enum BladeLength {
     Short,
     Medium,
@@ -23,6 +28,7 @@ pub enum BladeLength {
     Great,
 }
 
+#[derive(strum::IntoStaticStr, Deserialize)]
 pub enum GuardCoverage {
     Open,
     Bar,
@@ -33,19 +39,21 @@ pub enum GuardCoverage {
     Enclosed,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, IntoStaticStr, Deserialize)]
 pub enum Direction {
     Left,
     Central,
     Right
 }
 
+#[derive(strum::IntoStaticStr, Deserialize)]
 pub enum BladeWidth {
     Narrow,
     Standard,
     Wide,
 }
 
+#[derive(strum::IntoStaticStr, Deserialize)]
 pub enum WeaponMaterial {
     Wood,
     Leather,
@@ -60,6 +68,7 @@ pub enum WeaponMaterial {
     Bone,
 }
 
+#[derive(strum::IntoStaticStr, Deserialize)]
 pub enum TimePeriod {
     Neanderthal,
     Classical,
