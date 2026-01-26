@@ -1,4 +1,5 @@
-use crate::{ai::description_prompt, weapon_params::WeaponParams};
+use crate::weapon_params;
+
 
 pub fn get_system_prompt() -> String {
     String::from("<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n
@@ -21,7 +22,7 @@ pub fn get_system_prompt() -> String {
     - sharpness: 0-100\n
     - period: Neanderthal, Classical, Medieval, Crusador, Colonial, Industrial, SpaceAge, Contemporary, SciFi\n
     
-    Analyse these semantic parameters, then map their ordianl data to these nominal values:\n
+    Analyse the semantic parameters, then map their ordianl data to these nominal values:\n
     - v_mirrored: whether the blade and handle are vertically flipped across the pommel location: true or false, default is false\n
     - pommel_extension: how far the pommel extends beneath the bottom of the handle: number greater than or equal to 0, default is 2.0\n
     - pommel_radius: the radius of the pommel: number greater than 0, default is 2.5\n
@@ -63,11 +64,52 @@ pub fn get_system_prompt() -> String {
     - blade_lean: how much the blade leans towards left or right: an angle between -90 and 90 where 0 is perfectly straight, default is 0.0\n
 
     Output Format:
-    Output the nominal parameters in JSON format.
-    Ensure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON.<|eot_id|>\n\n")
+    Output the nominal parameters in JSON format as shown below:\n
+    {
+    \"v_mirrored\": true/false,
+    \"pommel_extension\": value,
+    \"pommel_radius\": value,
+    \"handle_bottom_limit\": value,
+    \"handle_radius\": value,
+    \"handle_grip_offset\": value,
+    \"handle_grip_y_scale\": value,
+    \"guard_bottom\": value,
+    \"guard_front_stop\": value,
+    \"guard_back_stop\": value,
+    \"guard_left_stop\": value,
+    \"guard_right_stop\": value,
+    \"guard_effect_radius\": value,
+    \"guard_x_offset\": value,
+    \"guard_x_scale\": value,
+    \"guard_z_offset\": value,
+    \"guard_z_scale\": value,
+    \"guard_bar_back_offset\": value,
+    \"guard_bar_front_offset\": value,
+    \"guard_bar_left_offset\": value,
+    \"guard_bar_right_offset\": value,
+    \"guard_bar_radius\": value,
+    \"guard_bar_curves_bar\": true/false,
+    \"guard_bar_bottom_offset\": value,
+    \"guard_bar_x_scale\": value,
+    \"guard_bar_z_scale\": value,
+    \"blade_bottom\": value,
+    \"blade_radius\": value,
+    \"blade_front_width\": value,
+    \"blade_back_width\": value,
+    \"blade_left_top_slope\": value,
+    \"blade_right_top_slope\": value,
+    \"blade_scale_front_left_decrement\": value,
+    \"blade_scale_front_right_decrement\": value,
+    \"blade_scale_back_left_decrement\": value,
+    \"blade_scale_back_right_decrement\": value,
+    \"blade_height\": value,
+    \"blade_curvature\": value,
+    \"blade_lean\": value
+    }
+    \nEnsure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON.<|eot_id|>\n\n")
 }
 
-pub fn format_user_prompt(params: WeaponParams) -> String {
+pub fn format_user_prompt(params: weapon_params::WeaponParams) -> String {
     let mut output = String::from("<|start_header_id|>user<|end_header_id|>\n");
     output.push_str("\"blade_length\": \"");
     output.push_str(params.blade_length.into());
@@ -118,12 +160,10 @@ pub fn format_user_prompt(params: WeaponParams) -> String {
     output
 }
 
-pub fn get_full_prompt(params: WeaponParams) -> String {
+pub fn get_full_prompt(params: weapon_params::WeaponParams) -> String {
     let mut system_prompt = get_system_prompt();
     let user_prompt = format_user_prompt(params);
-    let assistant_prompt = description_prompt::get_assistant_prompt();
 
     system_prompt.push_str(&user_prompt);
-    system_prompt.push_str(&assistant_prompt);
     system_prompt
 }

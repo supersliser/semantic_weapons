@@ -13,11 +13,11 @@ fn main() {
     let mut json_str: String = String::from("");
     json_file.read_to_string(&mut json_str);
     let json = serde_json::from_str(&json_str).unwrap();
-    println!("Weapon Ordinal Parameters: {}", json_str);
 
     let model = ai::load::load_model(&model_path);
     let tokenizer = ai::load::load_tokenizer(&tokenizer_path);
     let prompt = ai::conversion_prompt::get_full_prompt(json);
+    println!("Full Prompt: {}", prompt);
     let tokens = ai::run::generate_tokens(prompt, &tokenizer);
     println!("Generated tokens");
     ai::run::generate_json(tokens, model, &tokenizer);
