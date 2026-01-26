@@ -5,11 +5,14 @@ use fidget::{
 };
 use nalgebra::Matrix4;
 use semantic_weapons::{
-    model_generator::{create_basic_weapon, model_params::ModelParams},
+    model_generator::{
+        create_basic_weapon,
+        model_params::{self, ModelParams},
+    },
     weapon_params::{BladeLength, BladeWidth, Direction},
 };
 
-use std::{env, time::SystemTime};
+use std::{env, fs::File, io::Read, time::SystemTime};
 
 fn main() {
     let start = SystemTime::now();
@@ -22,12 +25,26 @@ fn main() {
     let mut blade_direction = Direction::Central;
     let mut blade_angle = 0;
 
+    let mut params = ModelParams::default();
+
     let args: Vec<String> = env::args().collect();
     if args.iter().count() <= 1 {
         panic!("Please make sure to provide arguements")
     }
     for arg in 0..args.iter().count() - 1 {
         match args[arg].as_str() {
+            "-f" => {
+                if arg + 1 > args.iter().count() || arg + 2 < args.iter().count() {
+                    panic!("Please provide a json file")
+                }
+                let mut file =
+                    File::open(args[arg+1].clone()).unwrap();
+                let mut json_str = String::from("");
+                file.read_to_string(&mut json_str);
+                let json: model_params::ModelParams = serde_json::from_str(&json_str).unwrap();
+                params = json;
+                break;
+            }
             "-quality" => {
                 if arg + 1 > args.iter().count() {
                     panic!(
@@ -181,12 +198,13 @@ fn main() {
         );
     }
 
-    let mut params = ModelParams::default();
-    params.set_blade_length(blade_length);
-    params.set_blade_width(blade_width, blade_direction);
-    params.set_blade_count(blade_direction, bladed_edge_count);
-    params.set_has_guard(has_guard);
-    params.set_blade_curvature(blade_direction, blade_angle);
+    if params == ModelParams::default() {
+        params.set_blade_length(blade_length);
+        params.set_blade_width(blade_width, blade_direction);
+        params.set_blade_count(blade_direction, bladed_edge_count);
+        params.set_has_guard(has_guard);
+        params.set_blade_curvature(blade_direction, blade_angle);
+    }
     let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z(), params);
 
     //scaling shape to fit inside bounding box (1, 1, 1)

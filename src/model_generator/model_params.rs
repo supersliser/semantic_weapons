@@ -1,6 +1,8 @@
 use std::f64;
 
-#[derive(Clone, Copy)]
+use serde::Deserialize;
+
+#[derive(Clone, Copy, Deserialize, PartialEq)]
 pub struct ModelParams {
     pub v_mirrored: bool,
 

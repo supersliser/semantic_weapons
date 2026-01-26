@@ -89,7 +89,7 @@ pub fn get_system_prompt() -> String {
     \"blade_curvature\": value,
     \"blade_lean\": value
     }
-    \nEnsure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON.<|eot_id|>\n\n")
+    \nEnsure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON. Include all parameters listed and nothing else<|eot_id|>\n\n")
 }
 
 pub fn format_user_prompt(params: weapon_params::WeaponParams) -> String {

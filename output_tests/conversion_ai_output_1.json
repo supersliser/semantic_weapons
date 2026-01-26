@@ -1,6 +1,3 @@
-Here is the corrected code with the ordinal data mapped to nominal parameters:
-
-```
 {
     "v_mirrored": false,
     "pommel_extension": 2.0,
@@ -33,25 +30,3 @@ Here is the corrected code with the ordinal data mapped to nominal parameters:
     "blade_curvature": -20.0,
     "blade_lean": 0.0
 }
-```
-
-This code maps the ordinal data to nominal parameters as follows:
-
-* `v_mirrored`: false
-* `pommel_extension`: 2.0
-* `pommel_radius`: 2.5
-* `handle_bottom_limit`: 5.5
-* `handle_radius`: 0.5
-* `handle_grip_offset`: 0.2
-* `handle_grip_y_scale`: 2.0
-* `guard_bottom`: 4.0
-* `guard_front_stop`: 2.0
-* `guard_back_stop`: 2.0
-* `guard_left_stop`: 5.0
-* `guard_right_stop`: 5.0
-* `guard_effect_radius`: 2.0
-* `guard_x_offset`: 2.0
-* `guard_x_scale`: 1.0
-* `guard_z_offset`: 2.0
-* `guard_z_scale`: 0.1
-* `blade_bottom`: 15

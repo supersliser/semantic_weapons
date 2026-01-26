@@ -13,5 +13,7 @@ fn main() {
     let prompt = ai::description_prompt::get_full_prompt(character_description);
     let tokens = ai::run::generate_tokens(prompt, &tokenizer);
     println!("Generated tokens");
-    ai::run::generate_json(tokens, model, &tokenizer, String::from("./description_ai_output.txt"));
+    let file_count = std::fs::read_dir("./output_tests").unwrap().filter(|x|String::from(x.as_ref().unwrap().file_name().to_str().unwrap()).contains("description_ai_output")).count();
+    ai::run::generate_json(tokens, model, &tokenizer, String::from(format!("./output_tests/description_ai_output_{}.txt", file_count+1)));
+
 }

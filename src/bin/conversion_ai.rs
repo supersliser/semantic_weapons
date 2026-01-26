@@ -1,4 +1,4 @@
-use std::{env::Args, fs, io::Read};
+use std::{env::Args, fmt::format, fs, io::Read};
 
 use semantic_weapons::{ai, weapon_params::WeaponParams};
 
@@ -20,5 +20,6 @@ fn main() {
     println!("Full Prompt: {}", prompt);
     let tokens = ai::run::generate_tokens(prompt, &tokenizer);
     println!("Generated tokens");
-    ai::run::generate_json(tokens, model, &tokenizer, String::from("./conversion_ai_output.txt"));
+    let file_count = std::fs::read_dir("./output_tests").unwrap().filter(|x|String::from(x.as_ref().unwrap().file_name().to_str().unwrap()).contains("conversion_ai_output")).count();
+ai::run::generate_json(tokens, model, &tokenizer, String::from(format!("./output_tests/conversion_ai_output_{}.txt", file_count+1)));
 }
