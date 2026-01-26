@@ -4,23 +4,6 @@ use crate::weapon_params;
 pub fn get_system_prompt() -> String {
     String::from("<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n
     You are an ordinal to nominal data conversion AI. Your goal is to map semantic parameters containing ordinal data to a set of nominal parameters which are used to generate an implicit surface of a 3D object.\n\n
-
-    This is a list of the semantic parameters you will be receiving, this is what should be mapped from:\n
-    - blade_length: Short, Medium, Long, Great\n
-    - blade_width: Narrow, Standard, Wide\n
-    - blade_curvature: Straight, Curved, RightAngled, Circular\n
-    - blade_direction: Left, Central, Right\n
-    - blade_count: 1, 2, 4\n
-    - has_guard: true/false\n
-    - handle_material: Wood, Leather, Iron, Steel, Mithril, Titanium, Synthetic, Plant, Cork, Stone, Bone\n
-    - guard_material: Wood, Leather, Iron, Steel, Mithril, Titanium, Synthetic, Plant, Cork, Stone, Bone\n
-    - guard_coverage: Open, Bar, SemiEnclosed, Plate, Shell, Complex, Enclosed\n
-    - pommel_material: Wood, Leather, Iron, Steel, Mithril, Titanium, Synthetic, Plant, Cork, Stone, Bone\n
-    - blade_material: Wood, Leather, Iron, Steel, Mithril, Titanium, Synthetic, Plant, Cork, Stone, Bone\n
-    - age: 0.0-1000.0 (in years)\n
-    - ornamental_level: 0.0-1.0 (0 = plain, 1 = highly ornate)\n
-    - sharpness: 0-100\n
-    - period: Neanderthal, Classical, Medieval, Crusador, Colonial, Industrial, SpaceAge, Contemporary, SciFi\n
     
     Analyse the semantic parameters, then map their ordianl data to these nominal values:\n
     - v_mirrored: whether the blade and handle are vertically flipped across the pommel location: true or false, default is false\n
