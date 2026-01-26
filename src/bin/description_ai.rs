@@ -13,5 +13,5 @@ fn main() {
     let prompt = ai::description_prompt::get_full_prompt(character_description);
     let tokens = ai::run::generate_tokens(prompt, &tokenizer);
     println!("Generated tokens");
-    ai::run::generate_json(tokens, model, &tokenizer);
+    ai::run::generate_json(tokens, model, &tokenizer, String::from("./description_ai_output.txt"));
 }

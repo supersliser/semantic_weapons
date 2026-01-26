@@ -20,5 +20,5 @@ fn main() {
     println!("Full Prompt: {}", prompt);
     let tokens = ai::run::generate_tokens(prompt, &tokenizer);
     println!("Generated tokens");
-    ai::run::generate_json(tokens, model, &tokenizer);
+    ai::run::generate_json(tokens, model, &tokenizer, String::from("./conversion_ai_output.txt"));
 }
