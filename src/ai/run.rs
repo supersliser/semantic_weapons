@@ -10,7 +10,7 @@ pub fn generate_tokens(prompt: String, tokenizer: &tokenizers::Tokenizer) -> Vec
 
 pub fn generate_json(mut tokens: Vec<u32>, mut model: ModelWeights, tokenizer: &tokenizers::Tokenizer) -> () {
     let mut logits_processor = LogitsProcessor::new(22102004, Some(0.7), None);
-    for _ in 0..200 {
+    for _ in 0..2000 {
         let input = Tensor::new(tokens.as_slice(), &candle_core::Device::cuda_if_available(0).unwrap_or(candle_core::Device::Cpu))
             .expect("Unable to create tensor")
             .unsqueeze(0)
