@@ -71,7 +71,7 @@ pub fn get_system_prompt() -> String {
     \"guard_bar_left_offset\": value,\n
     \"guard_bar_right_offset\": value,\n
     \"guard_bar_radius\": value,\n
-    \"guard_bar_curves_bar\": true/false,\n
+    \"guard_bar_curves_back\": true/false,\n
     \"guard_bar_bottom_offset\": value,\n
     \"guard_bar_x_scale\": value,\n
     \"guard_bar_z_scale\": value,\n
@@ -89,7 +89,7 @@ pub fn get_system_prompt() -> String {
     \"blade_curvature\": value,\n
     \"blade_lean\": value\n
     }\n
-    \nEnsure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON. Include all parameters listed within the JSON format and nothing else<|eot_id|>\n\n")
+    \nEnsure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON. Include all parameters listed within the JSON format and nothing else. Never introduce keys that are not in the list above, never omit keys, and never wrap the JSON in markdown or prose<|eot_id|>\n\n")
 }
 
 pub fn format_user_prompt(params: weapon_params::WeaponParams) -> String {
