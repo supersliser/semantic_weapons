@@ -3,9 +3,9 @@ use crate::weapon_params;
 
 pub fn get_system_prompt() -> String {
     String::from("<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n
-    You are an ordinal to nominal data conversion AI. Your goal is to map semantic parameters containing ordinal data to a set of nominal parameters which are used to generate an implicit surface of a 3D object.\n\n
+    You are an ordinal to nominal data conversion AI. Your goal is to map semantic parameters containing ordinal data to a set of nominal parameters which are used in an implicit surface algorithm.\n\n
     
-    Analyse the semantic parameters, then map their ordianl data to these nominal values:\n
+    Analyse the semantic parameters from the user input, then map their ordianl data to these nominal values:\n
     - v_mirrored: whether the blade and handle are vertically flipped across the pommel location: true or false, default is false\n
     - pommel_extension: how far the pommel extends beneath the bottom of the handle: number greater than or equal to 0, default is 2.0\n
     - pommel_radius: the radius of the pommel: number greater than 0, default is 2.5\n
@@ -47,49 +47,49 @@ pub fn get_system_prompt() -> String {
     - blade_lean: how much the blade leans towards left or right: an angle between -90 and 90 where 0 is perfectly straight, default is 0.0\n
 
     Output Format:
-    Output the nominal parameters in JSON format as shown below:\n
-    {
-    \"v_mirrored\": true/false,
-    \"pommel_extension\": value,
-    \"pommel_radius\": value,
-    \"handle_bottom_limit\": value,
-    \"handle_radius\": value,
-    \"handle_grip_offset\": value,
-    \"handle_grip_y_scale\": value,
-    \"guard_bottom\": value,
-    \"guard_front_stop\": value,
-    \"guard_back_stop\": value,
-    \"guard_left_stop\": value,
-    \"guard_right_stop\": value,
-    \"guard_effect_radius\": value,
-    \"guard_x_offset\": value,
-    \"guard_x_scale\": value,
-    \"guard_z_offset\": value,
-    \"guard_z_scale\": value,
-    \"guard_bar_back_offset\": value,
-    \"guard_bar_front_offset\": value,
-    \"guard_bar_left_offset\": value,
-    \"guard_bar_right_offset\": value,
-    \"guard_bar_radius\": value,
-    \"guard_bar_curves_bar\": true/false,
-    \"guard_bar_bottom_offset\": value,
-    \"guard_bar_x_scale\": value,
-    \"guard_bar_z_scale\": value,
-    \"blade_bottom\": value,
-    \"blade_radius\": value,
-    \"blade_front_width\": value,
-    \"blade_back_width\": value,
-    \"blade_left_top_slope\": value,
-    \"blade_right_top_slope\": value,
-    \"blade_scale_front_left_decrement\": value,
-    \"blade_scale_front_right_decrement\": value,
-    \"blade_scale_back_left_decrement\": value,
-    \"blade_scale_back_right_decrement\": value,
-    \"blade_height\": value,
-    \"blade_curvature\": value,
-    \"blade_lean\": value
-    }
-    \nEnsure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON. Include all parameters listed and nothing else<|eot_id|>\n\n")
+    Output the data in JSON format as shown below:\n
+    {\n
+    \"v_mirrored\": true/false,\n
+    \"pommel_extension\": value,\n
+    \"pommel_radius\": value,\n
+    \"handle_bottom_limit\": value,\n
+    \"handle_radius\": value,\n
+    \"handle_grip_offset\": value,\n
+    \"handle_grip_y_scale\": value,\n
+    \"guard_bottom\": value,\n
+    \"guard_front_stop\": value,\n
+    \"guard_back_stop\": value,\n
+    \"guard_left_stop\": value,\n
+    \"guard_right_stop\": value,\n
+    \"guard_effect_radius\": value,\n
+    \"guard_x_offset\": value,\n
+    \"guard_x_scale\": value,\n
+    \"guard_z_offset\": value,\n
+    \"guard_z_scale\": value,\n
+    \"guard_bar_back_offset\": value,\n
+    \"guard_bar_front_offset\": value,\n
+    \"guard_bar_left_offset\": value,\n
+    \"guard_bar_right_offset\": value,\n
+    \"guard_bar_radius\": value,\n
+    \"guard_bar_curves_bar\": true/false,\n
+    \"guard_bar_bottom_offset\": value,\n
+    \"guard_bar_x_scale\": value,\n
+    \"guard_bar_z_scale\": value,\n
+    \"blade_bottom\": value,\n
+    \"blade_radius\": value,\n
+    \"blade_front_width\": value,\n
+    \"blade_back_width\": value,\n
+    \"blade_left_top_slope\": value,\n
+    \"blade_right_top_slope\": value,\n
+    \"blade_scale_front_left_decrement\": value,\n
+    \"blade_scale_front_right_decrement\": value,\n
+    \"blade_scale_back_left_decrement\": value,\n
+    \"blade_scale_back_right_decrement\": value,\n
+    \"blade_height\": value,\n
+    \"blade_curvature\": value,\n
+    \"blade_lean\": value\n
+    }\n
+    \nEnsure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON. Include all parameters listed within the JSON format and nothing else<|eot_id|>\n\n")
 }
 
 pub fn format_user_prompt(params: weapon_params::WeaponParams) -> String {
@@ -139,7 +139,7 @@ pub fn format_user_prompt(params: weapon_params::WeaponParams) -> String {
     output.push_str("\"period\": \"");
     output.push_str(params.period.into());
     output.push_str("\",\n");
-    output.push_str(&"\n<|eot_id|>\n\n");
+    output.push_str(&"\n<|eot_id|>\n\n<|end_of_text|>");
     output
 }
 
