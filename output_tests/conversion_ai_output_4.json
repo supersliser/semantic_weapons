@@ -1,5 +1,3 @@
-<|begin_of_text|>The input string "blade_length": "Short" does not correspond to a valid property name. A valid property name must not contain spaces.
-
 {
 "v_mirrored": true,
 "pommel_extension": 2.0,
@@ -31,23 +29,4 @@
 "blade_height": 25.0,
 "blade_curvature": -20.0,
 "blade_lean": 0.0
-}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
-{
-"v_mirrored": true,
-"pommel_extension": 2.0,
-"pommel_radius": 2.5,
-"handle_bottom_limit": 5.0,
-"handle_radius": 0.5,
-"handle_grip_offset": 0,
-"handle_grip_y_scale": 1.0,
-"guard_bottom": 1.0,
-"guard_front_stop": 2.0,
-"guard_back_stop": 2.0,
-"guard_left_stop": 0,
-"guard_right_stop": 0,
-"guard_effect_radius": 0.1,
-"guard_x_offset": 0.5,
-"guard_x_scale": 1.0,
-"guard_z_offset": 0.1,
-"guard
+}
