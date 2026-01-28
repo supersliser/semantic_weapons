@@ -7,7 +7,7 @@ use nalgebra::Matrix4;
 use semantic_weapons::{
     model_generator::{
         create_basic_weapon,
-        model_params::{self, ModelParams},
+        model_params::ModelParams,
     },
     weapon_params::{BladeLength, BladeWidth, Direction},
 };
@@ -31,6 +31,7 @@ fn main() {
     if args.iter().count() <= 1 {
         panic!("Please make sure to provide arguements")
     }
+    let mut loaded_from_json = false;
     for arg in 0..args.iter().count() - 1 {
         match args[arg].as_str() {
             "-f" => {
@@ -40,9 +41,25 @@ fn main() {
                 let mut file =
                     File::open(args[arg+1].clone()).unwrap();
                 let mut json_str = String::from("");
-                file.read_to_string(&mut json_str);
-                let json: model_params::ModelParams = serde_json::from_str(&json_str).unwrap();
-                params = json;
+                file.read_to_string(&mut json_str).unwrap();
+                
+                // Deserialize with defaults for missing fields
+                let json_value: serde_json::Value = serde_json::from_str(&json_str).unwrap();
+                let default_params = ModelParams::default();
+                
+                // Merge JSON values into default params
+                if let serde_json::Value::Object(map) = json_value {
+                    let merged_json = serde_json::to_value(&default_params).unwrap();
+                    if let serde_json::Value::Object(mut merged_map) = merged_json {
+                        for (key, value) in map {
+                            merged_map.insert(key, value);
+                        }
+                        params = serde_json::from_value(serde_json::Value::Object(merged_map)).unwrap();
+                    }
+                } else {
+                    params = default_params;
+                }
+                loaded_from_json = true;
                 break;
             }
             "-quality" => {
@@ -198,7 +215,7 @@ fn main() {
         );
     }
 
-    if params == ModelParams::default() {
+    if params == ModelParams::default() && !loaded_from_json {
         params.set_blade_length(blade_length);
         params.set_blade_width(blade_width, blade_direction);
         params.set_blade_count(blade_direction, bladed_edge_count);
@@ -208,7 +225,7 @@ fn main() {
     let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z(), params);
 
     //scaling shape to fit inside bounding box (1, 1, 1)
-    let mut scaling = params.blade_height + params.blade_bottom;
+    let mut scaling = params.blade_height;
     scaling += 10.0;
     if params.v_mirrored {
         scaling *= 2.0;

@@ -1,8 +1,8 @@
 use std::f64;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Deserialize, Serialize, PartialEq)]
 pub struct ModelParams {
     pub v_mirrored: bool,
 
@@ -24,6 +24,8 @@ pub struct ModelParams {
     pub guard_x_scale: f64,
     pub guard_z_offset: f64,
     pub guard_z_scale: f64,
+    pub has_guard: bool,
+    pub has_guard_bar: bool,
     pub guard_bar_front_offset: f64,
     pub guard_bar_back_offset: f64,
     pub guard_bar_left_offset: f64,
@@ -91,6 +93,8 @@ impl Default for ModelParams {
             guard_bar_bottom_offset: 1.0,
             guard_bar_x_scale: 1.0,
             guard_bar_z_scale: 0.1,
+            has_guard: true,
+            has_guard_bar: true,
         }
     }
 }

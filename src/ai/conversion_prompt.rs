@@ -23,6 +23,8 @@ pub fn get_system_prompt() -> String {
     - guard_x_scale: x direction scale of each boolean cylinder: number greater than or equal to 0, default is 1.0\n
     - guard_z_offset: z direction distance each boolean cylinder is from the center of the guard: number greater than or equal to 0, default is 2.0\n
     - guard_z_scale: z direction scale of each boolean cylinder: number greater than or equal to 0, default is 3.0\n
+    - has_guard: whether the weapon has a hand guard plate at the meeting point between the blade and handle: true or false, default is true\n
+    - has_guard_bar: whether the weapon has a bar travelling the length of the handle from the hand guard plate: true or false, default is true\n
     - guard_bar_back_offset: how far the hand guard bar is from the center of the handle in -x direction: number greater than or equal to 0, default is 0.0\n
     - guard_bar_front_offset: how far the hand guard bar is from the center of the handle in +x direction: number greater than or equal to 0, default is 0.0\n
     - guard_bar_left_offset: how far the hand guard bar is from the center of the handle in +z direction: number greater than or eqaul to 0, default is 2.0\n
@@ -66,6 +68,8 @@ pub fn get_system_prompt() -> String {
     \"guard_x_scale\": value,\n
     \"guard_z_offset\": value,\n
     \"guard_z_scale\": value,\n
+    \"has_guard\": true/false\n
+    \"has_guard_bar\": true/false\n
     \"guard_bar_back_offset\": value,\n
     \"guard_bar_front_offset\": value,\n
     \"guard_bar_left_offset\": value,\n
