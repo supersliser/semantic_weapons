@@ -159,7 +159,7 @@ pub fn get_assistant_prompt() -> String {
 pub fn get_full_prompt(params: weapon_params::WeaponParams) -> String {
     let mut system_prompt = get_system_prompt();
     let user_prompt = format_user_prompt(params);
-    let assistant_prompt = crate::ai::description_prompt::get_assistant_prompt();
+    let assistant_prompt = get_assistant_prompt();
 
     system_prompt.push_str(&assistant_prompt);
     system_prompt.push_str(&user_prompt);
