@@ -51,47 +51,47 @@ pub fn get_system_prompt() -> String {
     Output Format:
     Output the data in JSON format as shown below:\n
     {\n
-    \"v_mirrored\": true/false,\n
-    \"pommel_extension\": value,\n
-    \"pommel_radius\": value,\n
-    \"handle_bottom_limit\": value,\n
-    \"handle_radius\": value,\n
-    \"handle_grip_offset\": value,\n
-    \"handle_grip_y_scale\": value,\n
-    \"guard_bottom\": value,\n
-    \"guard_front_stop\": value,\n
-    \"guard_back_stop\": value,\n
-    \"guard_left_stop\": value,\n
-    \"guard_right_stop\": value,\n
-    \"guard_effect_radius\": value,\n
-    \"guard_x_offset\": value,\n
-    \"guard_x_scale\": value,\n
-    \"guard_z_offset\": value,\n
-    \"guard_z_scale\": value,\n
-    \"has_guard\": true/false\n
-    \"has_guard_bar\": true/false\n
-    \"guard_bar_back_offset\": value,\n
-    \"guard_bar_front_offset\": value,\n
-    \"guard_bar_left_offset\": value,\n
-    \"guard_bar_right_offset\": value,\n
-    \"guard_bar_radius\": value,\n
-    \"guard_bar_curves_back\": true/false,\n
-    \"guard_bar_bottom_offset\": value,\n
-    \"guard_bar_x_scale\": value,\n
-    \"guard_bar_z_scale\": value,\n
-    \"blade_bottom\": value,\n
-    \"blade_radius\": value,\n
-    \"blade_front_width\": value,\n
-    \"blade_back_width\": value,\n
-    \"blade_left_top_slope\": value,\n
-    \"blade_right_top_slope\": value,\n
-    \"blade_scale_front_left_decrement\": value,\n
-    \"blade_scale_front_right_decrement\": value,\n
-    \"blade_scale_back_left_decrement\": value,\n
-    \"blade_scale_back_right_decrement\": value,\n
-    \"blade_height\": value,\n
-    \"blade_curvature\": value,\n
-    \"blade_lean\": value\n
+    \"v_mirrored\": true/false,
+    \"pommel_extension\": value,
+    \"pommel_radius\": value,
+    \"handle_bottom_limit\": value,
+    \"handle_radius\": value,
+    \"handle_grip_offset\": value,
+    \"handle_grip_y_scale\": value,
+    \"guard_bottom\": value,
+    \"guard_front_stop\": value,
+    \"guard_back_stop\": value,
+    \"guard_left_stop\": value,
+    \"guard_right_stop\": value,
+    \"guard_effect_radius\": value,
+    \"guard_x_offset\": value,
+    \"guard_x_scale\": value,
+    \"guard_z_offset\": value,
+    \"guard_z_scale\": value,
+    \"has_guard\": true/false,
+    \"has_guard_bar\": true/false,
+    \"guard_bar_back_offset\": value,
+    \"guard_bar_front_offset\": value,
+    \"guard_bar_left_offset\": value,
+    \"guard_bar_right_offset\": value,
+    \"guard_bar_radius\": value,
+    \"guard_bar_curves_back\": true/false,
+    \"guard_bar_bottom_offset\": value,
+    \"guard_bar_x_scale\": value,
+    \"guard_bar_z_scale\": value,
+    \"blade_bottom\": value,
+    \"blade_radius\": value,
+    \"blade_front_width\": value,
+    \"blade_back_width\": value,
+    \"blade_left_top_slope\": value,
+    \"blade_right_top_slope\": value,
+    \"blade_scale_front_left_decrement\": value,
+    \"blade_scale_front_right_decrement\": value,
+    \"blade_scale_back_left_decrement\": value,
+    \"blade_scale_back_right_decrement\": value,
+    \"blade_height\": value,
+    \"blade_curvature\": value,
+    \"blade_lean\": value
     }\n
     \nEnsure the JSON is properly formatted and valid. If a value is not going to be used, enter it as the default parameter. Do not include any additional text outside of the JSON. Include all parameters listed within the JSON format and nothing else. Never introduce keys that are not in the list above, never omit keys, and never wrap the JSON in markdown or prose<|eot_id|>\n\n")
 }
@@ -147,10 +147,20 @@ pub fn format_user_prompt(params: weapon_params::WeaponParams) -> String {
     output
 }
 
+pub fn get_assistant_prompt() -> String {
+    let mut output = String::from("<|start_header_id|>assistant<|end_header_id|>\n
+    This is the default values for the user input, use this to gain additional context on the mapping between the ordinal and nominal parameters:
+    ");
+    output.push_str(&serde_json::to_string(&weapon_params::WeaponParams::default()).unwrap());
+    output
+}
+
 pub fn get_full_prompt(params: weapon_params::WeaponParams) -> String {
     let mut system_prompt = get_system_prompt();
     let user_prompt = format_user_prompt(params);
+    let assistant_prompt = crate::ai::description_prompt::get_assistant_prompt();
 
+    system_prompt.push_str(&assistant_prompt);
     system_prompt.push_str(&user_prompt);
     system_prompt
 }

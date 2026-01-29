@@ -1,0 +1,17 @@
+{
+    "blade_length": "Short",
+    "blade_width": "Wide",
+    "blade_curvature": 30,
+    "blade_direction": "Left",
+    "blade_count": 1,
+    "has_guard": false,
+    "handle_material": "Steel",
+    "guard_material": "Steel",
+    "guard_coverage": "Bar",
+    "pommel_material": "Bone",
+    "blade_material": "Steel",
+    "age": 800.0,
+    "ornamental_level": 100,
+    "sharpness": 80,
+    "period": "Crusador"
+}

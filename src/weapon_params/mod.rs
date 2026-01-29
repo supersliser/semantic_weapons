@@ -1,7 +1,7 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use strum::IntoStaticStr;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct WeaponParams {
     pub blade_length: BladeLength,
     pub blade_width: BladeWidth,
@@ -17,10 +17,32 @@ pub struct WeaponParams {
     pub age: f32,
     pub ornamental_level: f32,
     pub sharpness: u8,
-    pub period: TimePeriod
+    pub period: TimePeriod,
 }
 
-#[derive(strum::IntoStaticStr, Deserialize)]
+impl Default for WeaponParams {
+    fn default() -> Self {
+        WeaponParams {
+            blade_length: BladeLength::Medium,
+            blade_width: BladeWidth::Standard,
+            blade_curvature: 0,
+            blade_direction: Direction::Central,
+            blade_count: 2,
+            has_guard: true,
+            handle_material: WeaponMaterial::Wood,
+            guard_material: WeaponMaterial::Steel,
+            guard_coverage: GuardCoverage::Plate,
+            pommel_material: WeaponMaterial::Bone,
+            blade_material: WeaponMaterial::Steel,
+            age: 1.0,
+            ornamental_level: 0.5,
+            sharpness: 100,
+            period: TimePeriod::Medieval,
+        }
+    }
+}
+
+#[derive(strum::IntoStaticStr, Deserialize, Serialize)]
 pub enum BladeLength {
     Short,
     Medium,
@@ -28,7 +50,7 @@ pub enum BladeLength {
     Great,
 }
 
-#[derive(strum::IntoStaticStr, Deserialize)]
+#[derive(strum::IntoStaticStr, Deserialize, Serialize)]
 pub enum GuardCoverage {
     Open,
     Bar,
@@ -39,21 +61,21 @@ pub enum GuardCoverage {
     Enclosed,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, IntoStaticStr, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Copy, IntoStaticStr, Serialize, Deserialize)]
 pub enum Direction {
     Left,
     Central,
-    Right
+    Right,
 }
 
-#[derive(strum::IntoStaticStr, Deserialize)]
+#[derive(strum::IntoStaticStr, Deserialize, Serialize)]
 pub enum BladeWidth {
     Narrow,
     Standard,
     Wide,
 }
 
-#[derive(strum::IntoStaticStr, Deserialize)]
+#[derive(strum::IntoStaticStr, Deserialize, Serialize)]
 pub enum WeaponMaterial {
     Wood,
     Leather,
@@ -68,7 +90,7 @@ pub enum WeaponMaterial {
     Bone,
 }
 
-#[derive(strum::IntoStaticStr, Deserialize)]
+#[derive(strum::IntoStaticStr, Deserialize, Serialize)]
 pub enum TimePeriod {
     Neanderthal,
     Classical,
@@ -78,5 +100,5 @@ pub enum TimePeriod {
     Industrial,
     SpaceAge,
     Contempary,
-    SciFi
+    SciFi,
 }

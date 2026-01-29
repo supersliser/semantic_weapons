@@ -1,25 +1,3 @@
-<|begin_of_text|>itletter, I will format the JSON as instructed.
-
-```
-{
-  "blade_length": "Short",
-  "blade_width": "Wide",
-  "blade_curvature": "30",
-  "blade_direction": "Left",
-  "blade_count": "1",
-  "has_guard": "false",
-  "handle_material": "Steel",
-  "guard_material": "Steel",
-  "guard_coverage": "Ring",
-  "pommel_material": "Bone",
-  "blade_material": "Steel",
-  "age": 800,
-  "ornamental_level": 100,
-  "sharpness": 80,
-  "type": "Crusador"
-}
-```<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
 {
   "v_mirrored": true,
   "pommel_extension": 2.0,
@@ -48,11 +26,3 @@
   "blade_curvature": 20.0,
   "blade_lean": 0.0
 }
-```<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
-{
-  "v_mirrored": true,
-  "pommel_extension": 2.0,
-  "pommel_radius": 2.5,
-  "handle_bottom_limit": 2.0,
-  "handle_radius": 0.
