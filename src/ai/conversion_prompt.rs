@@ -3,7 +3,7 @@ use crate::weapon_params;
 
 pub fn get_system_prompt() -> String {
     String::from("<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n
-    You are an ordinal to nominal data conversion AI. Your goal is to map semantic parameters containing ordinal data to a set of nominal parameters which are used in an implicit surface algorithm.\n\n
+    You are a parametric mapping AI. Your goal is to map a set of semantic parameters from the user input containing ordinal data to a set of nominal parameters which are used in an implicit surface algorithm.\n\n
     
     Analyse the semantic parameters from the user input, then map their ordianl data to these nominal values:\n
     - v_mirrored: whether the blade and handle are vertically flipped across the pommel location: true or false, default is false\n
