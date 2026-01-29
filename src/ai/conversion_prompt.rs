@@ -152,6 +152,7 @@ pub fn get_assistant_prompt() -> String {
     This is the default values for the user input, use this to gain additional context on the mapping between the ordinal and nominal parameters:
     ");
     output.push_str(&serde_json::to_string(&weapon_params::WeaponParams::default()).unwrap());
+    output.push_str(&String::from("<|eot_id|>"));
     output
 }
 
