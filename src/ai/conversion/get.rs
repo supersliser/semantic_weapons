@@ -1,16 +1,20 @@
-use hf_hub::{Repo, api::sync::{Api, ApiBuilder}};
 use std::path::PathBuf;
+
+use hf_hub::{
+    Repo,
+    api::sync::{Api, ApiBuilder},
+};
 
 pub fn get_model() -> PathBuf {
     let api = get_auth();
 
     let repo = api.repo(Repo::new(
-        "bartowski/Llama-3.2-1B-Instruct-GGUF".to_string(),
+        "MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF".to_string(),
         hf_hub::RepoType::Model,
     ));
 
     let path = repo
-        .get("Llama-3.2-1B-Instruct-Q4_K_M.gguf")
+        .get("Mistral-7B-Instruct-v0.3.Q4_K_M.gguf")
         .expect("Failed to download AI model");
 
     println!("Model located at: {:?}", path);
@@ -21,7 +25,7 @@ pub fn get_tokenizer() -> PathBuf {
     let api = get_auth();
 
     let repo = api.repo(Repo::new(
-        "nicoboss/Llama-3.2-1B-Instruct-Uncensored".to_string(),
+        "mistralai/Mistral-7B-Instruct-v0.3".to_string(),
         hf_hub::RepoType::Model,
     ));
 
@@ -35,8 +39,10 @@ pub fn get_tokenizer() -> PathBuf {
 
 fn get_auth() -> Api {
     dotenvy::dotenv().ok();
-   ApiBuilder::new()
-   .with_token(Some(std::env::var("HF_KEY").expect("HF_KEY not set in .env")))
-   .build()
-   .unwrap()
+    ApiBuilder::new()
+        .with_token(Some(
+            std::env::var("HF_KEY").expect("HF_KEY not set in .env"),
+        ))
+        .build()
+        .unwrap()
 }

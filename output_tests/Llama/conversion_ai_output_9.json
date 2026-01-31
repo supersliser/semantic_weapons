@@ -1,0 +1,23 @@
+{
+    "v_mirrored": true,
+    "pommel_extension": 5.0,
+    "pommel_radius": 4.0,
+    "handle_bottom_limit": 5.0,
+    "handle_radius": 0.1,
+    "handle_grip_offset": 0.5,
+    "handle_grip_y_scale": 1.0,
+    "guard_bottom": 2.0,
+    "guard_front_stop": 3.0,
+    "guard_back_stop": 3.0,
+    "guard_left_stop": 1.5,
+    "guard_right_stop": 1.5,
+    "guard_bar_back_offset": 0.0,
+    "guard_bar_front_offset": 0.0,
+    "guard_bar_left_offset": 1.0,
+    "guard_bar_right_offset": -1.0,
+    "blade_bottom": 10.0,
+    "blade_radius": 0.2,
+    "blade_front_width": 0.1,
+    "blade_curvature": -20.0,
+    "blade_lean": 0.0
+}
