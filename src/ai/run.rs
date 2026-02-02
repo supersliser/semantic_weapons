@@ -28,7 +28,8 @@ pub fn generate_json(mut tokens: Vec<u32>, mut model: ModelWeights, tokenizer: &
             .replace(' ', " ")
             .replace("<0x0A>", "\n")
             .replace('Ġ', " ")
-            .replace('Ċ', "\n");
+            .replace('Ċ', "\n")
+            .replace('▁', " ");
             print!("{}", clean_text);
             file.write(clean_text.as_bytes());
             std::io::Write::flush(&mut std::io::stdout()).expect("Unable to flush stdout");
