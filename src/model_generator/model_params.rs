@@ -49,6 +49,19 @@ pub struct ModelParams {
     pub blade_height: f64,
     pub blade_curvature: f64,
     pub blade_lean: f64,
+
+    pub blade_serated_left: bool,
+    pub blade_serated_left_size: f64,
+    pub blade_serated_left_count: f64,
+    pub blade_serated_right: bool,
+    pub blade_serated_right_size: f64,
+    pub blade_serated_right_count: f64,
+    pub blade_spiked_left: bool,
+    pub blade_spiked_left_size: f64,
+    pub blade_spiked_left_count: f64,
+    pub blade_spiked_right: bool,
+    pub blade_spiked_right_size: f64,
+    pub blade_spiked_right_count: f64,
 }
 
 impl Default for ModelParams {
@@ -79,8 +92,8 @@ impl Default for ModelParams {
             guard_bar_curves_back: true,
             blade_bottom: 15.0,
             blade_radius: 5.0,
-            blade_front_width: 1.0,
-            blade_back_width: 1.0,
+            blade_front_width: 0.5,
+            blade_back_width: 0.5,
             blade_left_top_slope: 2.0,
             blade_right_top_slope: 2.0,
             blade_scale_front_left_decrement: 2.0,
@@ -95,6 +108,18 @@ impl Default for ModelParams {
             guard_bar_z_scale: 0.1,
             has_guard: true,
             has_guard_bar: true,
+            blade_serated_left: false,
+            blade_serated_left_count: 1.0,
+            blade_serated_left_size: 2.0,
+            blade_serated_right: true,
+            blade_serated_right_count: 1.0,
+            blade_serated_right_size: 2.0,
+            blade_spiked_left: true,
+            blade_spiked_left_count: 1.0,
+            blade_spiked_left_size: 2.0,
+            blade_spiked_right: false,
+            blade_spiked_right_count: 1.0,
+            blade_spiked_right_size: 2.0,
         }
     }
 }

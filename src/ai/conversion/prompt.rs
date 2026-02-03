@@ -14,8 +14,8 @@ pub fn get_system_prompt() -> String {
     - handle_grip_offset: the offset the the grip rings from the central handle: number greater than or equal to 0, default is 0.2\n
     - handle_grip_y_scale: the grip is made of rings of increasing and decreasing radius and this controls the scale along the handle of each ring: number greater than 1, default is 2.0\n
     - guard_bottom: how far the hand guard plate extends from the bottom of the blade: number greater than 0, default is 4.0\n
-    - guard_front_stop: how far the hand guard plate extends in the +x direction: number greater than or equal to 0, default is 2.0\n
-    - guard_back_stop: how far the hand guard plate extends in the -x direction: number greater than or equal to 0, default is 2.0\n
+    - guard_front_stop: how far the hand guard plate extends in the +x direction, 0.1 is closer to the center than 2.0: number greater than or equal to 0, default is 1.0\n
+    - guard_back_stop: how far the hand guard plate extends in the -x direction, 0.1 is closer to the center than 2.0: number greater than or equal to 0, default is 1.0\n
     - guard_left_stop: how far the hand guard plate extends in the +z direction: number greater than or equal to 0, default is 5.0\n
     - guard_right_stop: how far the hand guard plate extends in the -z direciton: number greater than or equal to 0, default is 5.0\n
     - guard_effect_radius: the guard has 4 cynlinders placed at the corners of the plate, these are used as booleans to subtract from the hand guard plate, this is the radius of those cylinders: number greater than or equal to 0, default is 2.0\n
@@ -47,6 +47,19 @@ pub fn get_system_prompt() -> String {
     - blade_height: how far the blade extends up: number greater than 0, default is 25.0\n
     - blade_curvature: how much the blade curves: number, negative curves towards -z while positive curves towards +z, default is -20.0\n
     - blade_lean: how much the blade leans towards left or right: an angle between -90 and 90 where 0 is perfectly straight, default is 0.0\n
+    - blade_serated_left: whether the +z side of the blade is serated: true or false, default is false\n
+    - blade_serated_left_count: the width of the serations along the +z side of the blade: number greater than 0, default is 1.0\n
+    - blade_serated_left_size: the depth of the serations along the +z side of the blade: number greater than 0, default is 2.0\n
+    - blade_serated_right: whether the -z side of the blade is serated: true or false, default is false\n
+    - blade_serated_right_count: the width of the serations along the -z side of the blade: number greater than 0, default is 1.0\n
+    - blade_serated_right_size: the depth of the serations along the -z side of the blade: number greater than 0, default is 2.0\n
+    - blade_spiked_left: whether the +z side of the blade is spiked: true or false, default is false\n
+    - blade_spiked_left_count: the width of the spikes along the +z side of the blade: number greater than 0, default is 1.0\n
+    - blade_spiked_left_size: the length of the spikes along the +z side of the blade: number greater than 0, default is 2.0\n
+    - blade_spiked_right: whether the -z side of the blade is spiked: true or false, default is false\n
+    - blade_spiked_right_count: the width of the spikes along the -z side of the blade: number greater than 0, default is 1.0\n
+    - blade_spiked_right_size: the length of the spikes along the -z side of the blade: number greater than 0, default is 2.0\n
+
 
     Output Format:
     Output the data in JSON format as shown below:\n
@@ -89,6 +102,18 @@ pub fn get_system_prompt() -> String {
     \"blade_scale_front_right_decrement\": value,
     \"blade_scale_back_left_decrement\": value,
     \"blade_scale_back_right_decrement\": value,
+    \"blade_serated_left\": true/false,
+    \"blade_serated_left_count\": value,
+    \"blade_serated_left_width\": value,
+    \"blade_serated_right\": true/false,
+    \"blade_serated_right_count\": value,
+    \"blade_serated_right_width\": value,
+    \"blade_spiked_left\": true/false,
+    \"blade_spiked_left_count\": value,
+    \"blade_spiked_left_width\": value,
+    \"blade_spiked_right\": true/false,
+    \"blade_spiked_right_count\": value,
+    \"blade_spiked_right_width\": value,
     \"blade_height\": value,
     \"blade_curvature\": value,
     \"blade_lean\": value
@@ -138,10 +163,16 @@ pub fn format_user_prompt(params: weapon_params::WeaponParams) -> String {
     output.push_str(params.ornamental_level.to_string().as_str());
     output.push_str("\",\n");
     output.push_str("\"sharpness\": \"");
-    output.push_str(params.sharpness.to_string().as_str());
+    output.push_str(params.blade_thickness.to_string().as_str());
     output.push_str("\",\n");
     output.push_str("\"period\": \"");
     output.push_str(params.period.into());
+    output.push_str("\",\n");
+    output.push_str("\"blade_type\": \"");
+    output.push_str(params.blade_type.into());
+    output.push_str("\",\n");
+    output.push_str("\"handle_length\": \"");
+    output.push_str(params.handle_length.into());
     output.push_str("\",\n");
     output.push_str(&"\n<|eot_id|>\n\n<|end_of_text|>");
     output

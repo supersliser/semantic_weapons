@@ -69,8 +69,8 @@ impl ModelParams {
                 self.guard_z_scale = 0.75;
                 self.guard_x_scale = 0.75;
                 self.guard_x_offset /= 1.0;
-                self.guard_left_stop /= 3.5;
-                self.guard_right_stop /= 3.5;
+                self.guard_left_stop /= 2.5;
+                self.guard_right_stop /= 2.5;
                 self.guard_front_stop /= 1.5;
                 self.guard_back_stop /= 1.5;
                 self.guard_effect_radius /= 1.0;

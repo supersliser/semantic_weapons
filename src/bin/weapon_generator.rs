@@ -225,8 +225,8 @@ fn main() {
     let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z(), params);
 
     //scaling shape to fit inside bounding box (1, 1, 1)
-    let mut scaling = params.blade_height;
-    scaling += 10.0;
+    let mut scaling = params.blade_height + params.blade_bottom;
+    scaling += 15.0;
     if params.v_mirrored {
         scaling *= 2.0;
     }

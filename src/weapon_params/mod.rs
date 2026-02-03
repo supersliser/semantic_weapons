@@ -16,8 +16,10 @@ pub struct WeaponParams {
     pub blade_material: WeaponMaterial,
     pub age: f32,
     pub ornamental_level: f32,
-    pub sharpness: u8,
+    pub blade_thickness: u8,
     pub period: TimePeriod,
+    pub handle_length: HandleLength,
+    pub blade_type: BladeType
 }
 
 impl Default for WeaponParams {
@@ -36,10 +38,29 @@ impl Default for WeaponParams {
             blade_material: WeaponMaterial::Steel,
             age: 1.0,
             ornamental_level: 0.5,
-            sharpness: 100,
+            blade_thickness: 20,
             period: TimePeriod::Medieval,
+            handle_length: HandleLength::OneHanded,
+            blade_type: BladeType::Sharp,
         }
     }
+}
+
+#[derive(strum::IntoStaticStr, Deserialize, Serialize)]
+pub enum BladeType {
+    Sharp,
+    Dull,
+    Serated,
+    Spikey
+}
+
+#[derive(strum::IntoStaticStr, Deserialize, Serialize)]
+pub enum HandleLength {
+    Dagger,
+    OneHanded,
+    TwoHanded,
+    ForearmLength,
+    Polearm
 }
 
 #[derive(strum::IntoStaticStr, Deserialize, Serialize)]
