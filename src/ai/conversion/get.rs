@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{fs, path::PathBuf};
 
 use hf_hub::{
     Repo,
@@ -39,10 +39,15 @@ pub fn get_tokenizer() -> PathBuf {
 
 fn get_auth() -> Api {
     dotenvy::dotenv().ok();
+    let cache_dir = std::env::current_dir()
+        .unwrap_or_else(|_| PathBuf::from("."))
+        .join(".hf_cache");
+    fs::create_dir_all(&cache_dir).expect("Failed to create local cache directory");
     ApiBuilder::new()
         .with_token(Some(
             std::env::var("HF_KEY").expect("HF_KEY not set in .env"),
         ))
+        .with_cache_dir(cache_dir)
         .build()
         .unwrap()
 }
