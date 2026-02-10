@@ -12,6 +12,8 @@
     "blade_material": "Steel",
     "age": 800.0,
     "ornamental_level": 100,
-    "sharpness": 80,
-    "period": "Crusador"
+    "blade_thickness": 80,
+    "period": "Crusador",
+    "blade_type": "Spikey",
+    "handle_length": "Polearm"
 }

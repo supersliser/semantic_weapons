@@ -1,0 +1,12 @@
+
+
+    {
+    "v_mirrored": false,
+    "pommel_extension": 2.0,
+    "pommel_radius": 2.5,
+    "handle_bottom_limit": 5.5,
+    "handle_radius": 0.5,
+    "handle_grip_offset": 0.2,
+    "handle_grip_y_scale": 2.0,
+    "guard_bottom": 4.0,
+   

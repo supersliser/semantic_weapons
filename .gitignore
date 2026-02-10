@@ -2,3 +2,4 @@
 .env
 Cargo.lock
 out.stl
+.hf_cache/
