@@ -3,3 +3,10 @@
 Cargo.lock
 out.stl
 .hf_cache/
+
+paper/*
+
+!paper/main.tex
+!paper/glossary.tex
+!paper/ref.bib
+!paper/images/

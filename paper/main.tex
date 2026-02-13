@@ -1,0 +1,68 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[toc, acronym]{glossaries}
+\doublespacing
+
+\usepackage[backend=biber, style=apa, sorting=nyt]{biblatex}
+\addbibresource[]{ref.bib}
+\usepackage{wrapfig}
+\usepackage{subcaption}
+\captionsetup[subfigure]{list=true}
+\usepackage{float}
+
+\graphicspath{{./images/}}
+
+\title{Semantic Weaponry}
+\author{Thomas Lower\\
+\textit{Supervised by}\\
+Dr. Eike Anderson}
+\date{March 2026}
+
+
+\makeglossaries
+\loadglsentries{glossary}
+
+\begin{document}
+
+\maketitle
+
+\addcontentsline{toc}{section}{Abstract}
+\begin{abstract}
+
+\end{abstract}
+
+\pagebreak
+
+\section*{Acknowledgements}
+I would like to thank Dr. Eike Anderson for his contributions and guidance in this project
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\listoffigures
+
+\pagebreak
+
+\printglossaries
+
+\pagebreak
+
+\section{Introduction} \label{intro}
+With the development and popularisation of \glspl{llm}, researchers and enthusiests have sought the expansion of its generative domain into computer graphics.
+
+\section{Background} \label{background}
+
+\section{Implementation} \label{impl}
+
+\section{Results} \label{results}
+
+\section{Conclusion} \label{conclusion}
+
+\printbibliography
+
+\end{document}
