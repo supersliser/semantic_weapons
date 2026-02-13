@@ -78,4 +78,5 @@ There are 20 parameters that were provided, but it seems that 19 of them were em
     "guard_bar_bottom_offset": 0.0,
     "guard_bar_x_scale": 1.0,
     "guard_bar_z_scale": 1.0,
-    "blade_bottom": 15.
+    "blade_bottom": 15.0,
+    "blade_radius":
