@@ -5,7 +5,7 @@ pub fn get_system_prompt() -> String {
     Analyse the character's traits. Then, map them to these numerical ranges:\n
     - blade_length: Short, Medium, Long, Great\n
     - blade_width: Narrow, Standard, Wide\n
-    - blade_curvature: Straight, Curved, RightAngled, Circular\n
+    - blade_curvature: 0.0-90.0\n
     - blade_direction: Left, Central, Right\n
     - blade_count: 1, 2, 4\n
     - has_guard: true/false\n
@@ -24,23 +24,23 @@ pub fn get_system_prompt() -> String {
     Output Format:\n
     Output the weapon parameters in JSON format as shown below:\n
     {
-        \"blade_length\": \"<value>\",
-        \"blade_width\": \"<value>\",
-        \"blade_curvature\": \"<value>\",
-        \"blade_direction\": \"<value>\",
-        \"blade_count\": <value>,
-        \"has_guard\": <true/false>,
-        \"handle_material\": \"<value>\",
-        \"guard_material: \"<value>\",
-        \"guard_coverage: \"<value>\",
-        \"pommel_material: \"<value>\",
-        \"blade_material\": \"<value>\",
-        \"age\": <value>,
-        \"ornamental_level\": <value>,
-        \"blade_thickness\": <value>,
-        \"period\": \"<value>\",
-        \"handle_length\": \"<value>\",
-        \"blade_type\": \"<value>\"
+        \"blade_length\": \"<Short||Medium||Long||Great>\",
+        \"blade_width\": \"<Narrow||Standard||Wide>\",
+        \"blade_curvature\": <number>,
+        \"blade_direction\": \"<Left, Central, Right>\",
+        \"blade_count\": <number>,
+        \"has_guard\": <true||false>,
+        \"handle_material\": \"<Wood||Leather||Iron||Steel||Mithril||Titanium||Synthetic||Plant||Cork||Stone||Bone>\",
+        \"guard_material: \"<Wood||Leather||Iron||Steel||Mithril||Titanium||Synthetic||Plant||Cork||Stone||Bone>\",
+        \"guard_coverage: \"<Open||Bar||SemiEnclosed||Plate||Shell||Complex||Enclosed>\",
+        \"pommel_material: \"<Wood||Leather||Iron||Steel||Mithril||Titanium||Synthetic||Plant||Cork||Stone||Bone>\",
+        \"blade_material\": \"<Wood||Leather||Iron||Steel||Mithril||Titanium||Synthetic||Plant||Cork||Stone||Bone>\",
+        \"age\": <number>,
+        \"ornamental_level\": <number>,
+        \"blade_thickness\": <number>,
+        \"period\": \"<Neanderthal||Classical||Medieval||Crusador||Colonial||Industrial||SpaceAge||Contemporary||SciFi>\",
+        \"handle_length\": \"<Dagger||OneHanded||TwoHanded||ForearmLength||Polearm>\",
+        \"blade_type\": \"<Sharp||Dull||Serated||Spikey>\"
     }
     
     Ensure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON.<|eot_id|>\n\n")
