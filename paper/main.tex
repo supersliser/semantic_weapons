@@ -53,11 +53,36 @@ I would like to thank Dr. Eike Anderson for his contributions and guidance in th
 \pagebreak
 
 \section{Introduction} \label{intro}
-With the development and popularisation of \glspl{llm}, specifically its generative capabilities. Many enthusiasts and researchers have studied the possibility of its expansion into the domain of Computer Graphics. This has been explored through many avenues such as: The use of python based vector graphics and HTML where the \gls{llm} generates the code used for this; The generation of bitmap based images based on a \gls{semantic} description; And many have attempted to take advantage of the node-based approach to \gls{ai} (\gls{neuralnetwork}) in order to allow it to generate 3D models. The latter of which has been found to be the least successful and stable.
+With the development and popularisation of \gls{llm}, specifically its generative capabilities. Many enthusiasts and researchers have studied the possibility of its expansion into the domain of Computer Graphics. This has been explored through many avenues such as: The use of python based vector graphics and HTML where the \gls{llm} generates the code used for this; The generation of bitmap based images based on a \gls{semantic} description; And many have attempted to take advantage of the node-based approach to AI (\gls{neuralnetwork}) in order to allow it to generate 3D models. The latter of which has been found to be the least successful and stable.
 
 \subsection{What is Artificial Intelligence?}
 
-There are 2 ways of understanding the definiton of an \gls{ai} System
+There are multiple ways of understanding the definiton of an AI System. The first is a purely ideological standpoint. This approach is largely based upon the work by Alan Turing. Wherein by "In its strictest definition, AI stands for the imitation by computers of the intelligence inherent in humans" \parencite{sheikh2023artificial}. Even in 1997, AI was being defined by ``Representations of ``reality,'' cognition, and information'' \parencite{national1997computer}. In this sense AI is any system in which the line between machine and human is blurred, where a person may not be able to tell the difference. There are many issues with this definition however. Firstly, it is based upon the computer-literacy of the user. Somebody who is more familiar with computer systems will be much more likely to be able to spot an AI system than somebody who lack such skills. Secondly, there is the intention of the algorithm, an algorithm for a chatbot will always be more capable of seeming \textit{human} than a calculator, as the chatbot's goal is to, well, chat, something that has always been quite specific to humans.
+
+There are also more specific versions of this understanding. Concepts such as AI existing to "capture of the thinking of a recognized expert, especially in the case where the expert is about to be lost." \parencite{simmons1988artificial} or the ability for "learning, reasoning and self-correction" \parencite{kok2009artificial}. These allow us to determine the defintion of an AI based on its features. This however, presents the issue of simulation. The name "Artifical intelligence" implies that the machine is innately intelligent, even if artificial. The intelligence is manufactured but is still present, however, there is a question of the system \textit{simulating} this intelligence. If it appears to be acting with intelligence but without actual intelligence, then is it intelligent? Is a simulation of a reality equivelant of said reality? This question poses an issue to these specific, functionality based definitions of AI as it does not provide a clear distinction between \textbf{intelligence} and \textbf{acting intelligent}.
+
+A further way of defining AI could be by its technical design. By associating it with other terms such as "Expert Systems" \parencite{simmons1988artificial} or "Neural Networks" (the concept of such being explored in \cite{dobrev2012definition}). However, this removes the understanding of an AI outside of the realm of computer science \parencite{abbass2021artificial} and limits it only to this field.
+
+For the purposes of this paper, AI will be defined in the way in which the UK Government explain the phenomenon in \cite{gajjar2023artificial} where ``Artificial Intelligence (AI) technologies are capable of:
+
+\begin{enumerate}
+    \item interpreting, processing and generating realistic human-like speech and text
+    \item interpreting, processing and generating images, videos and other visuals
+    \item independently performing tasks in the real world, such as when they are paired with machinery such as robots
+\end{enumerate}
+''
+
+I have chosen this definition as it is not overly specific to the functionality, without being too abstract that it could include an overwhelming number of concepts. Furthermore, its agreement by the legal background of this country provides confidence in its functionality as a strong definition.
+
+\subsection{Gen AI}
+
+Generative AI (gen ai) is a specific functionality of artificial intelligence systems in which the system is able transform a textual prompt of \gls{semantic} information into an output with some form of creative simulation. 3 of the biggest use cases of this are: futher textual data, programming code and even images or video. For the purposes of this exploration, I first wish to focus upon programming code.
+
+Within the realm of programming, the tools used to code a system have gone through multiple generations of development. Beginning with generation 1 programming language, A.K.A. Machine code. This was the rawest form of creating an intended output, however was too cumbersome and difficult to program with efficiently. Thus, the transition to generation 2 programming languages, nicknamed ``Assembly'' was born. This system would allow those with less education on the subject to make more with less effort, less understanding and less time. Although, at this stage the barrier to entry was still exceptionally high, such that anyone without the education afforded by a specialised institution would not be able to attempt programming.
+
+Due to this, still incredible, barrier to entry, 3rd generation programming languages were created to allow much easier input into computer systems, providing direct and abstract interfaces for lovelacian principles, this made programming much more accessible, such that it was simple enough to allow learning through experience or other methods of self-study. However, this required the simplification and abstraction of many principles within the field. With this switch, it could be described that the focus shifted from \textit{how the computer works} to \textit{how the program works}. This change was then pushed further with the advent of 4th generation languages which focussed on \textit{what the program does} rather than \textit{how the program works}, evidencing further accessibility at the reduction of difficulty and control.
+
+Finally, I propose that the generative AI systems being able to write 3rd generation code 
 
 \section{Background} \label{background}
 
