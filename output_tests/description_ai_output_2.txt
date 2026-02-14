@@ -1,0 +1,32 @@
+Weapon Type: Broad Sword
+Blade Length: Medium<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+{
+    "blade_length": "Medium",
+    "blade_width": "Narrow",
+    "blade_curvature": 20.0,
+    "blade_direction": "Right",
+    "blade_count": 1,
+    "has_guard": false,
+    "handle_material": "Wood",
+    "guard_material": "Leather",
+    "guard_coverage": "Open",
+    "pommel_material": "Wood",
+    "blade_material": "Wood",
+    "age": 400,
+    "ornamental_level": 0.5,
+    "blade_thickness": 50,
+    "period": "Classical",
+    "handle_length": "Dagger",
+    "blade_type": "Sharp"
+}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+{
+    "blade_length": "Medium",
+    "blade_width": "Narrow",
+    "blade_curvature": 20.0,
+    "blade_direction": "Right",
+    "blade_count": 1,
+    "has_guard": false,
+    "handle_material": "Wood",
+    "
