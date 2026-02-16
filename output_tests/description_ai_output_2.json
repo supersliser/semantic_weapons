@@ -1,7 +1,7 @@
 {
     "blade_length": "Medium",
     "blade_width": "Narrow",
-    "blade_curvature": 20.0,
+    "blade_curvature": 20,
     "blade_direction": "Right",
     "blade_count": 1,
     "has_guard": false,
