@@ -5,11 +5,8 @@ use fidget::{
 };
 use nalgebra::Matrix4;
 use semantic_weapons::{
-    model_generator::{
-        create_basic_weapon,
-        model_params::ModelParams,
-    },
-    weapon_params::{BladeLength, BladeWidth, Direction},
+    model_generator::{create_basic_weapon, model_params::ModelParams},
+    weapon_params::{BladeLength, BladeType, BladeWidth, Direction, GuardCoverage, GuardPlateShape, HandleLength},
 };
 
 use std::{env, fs::File, io::Read, time::SystemTime};
@@ -24,6 +21,12 @@ fn main() {
     let mut has_guard = true;
     let mut blade_direction = Direction::Central;
     let mut blade_angle = 0;
+    let mut handle_length = HandleLength::TwoHanded;
+    let mut blade_type = BladeType::Sharp;
+    let mut blade_thickness: Option<f64> = None;
+    let mut guard_coverage: Option<GuardCoverage> = None;
+    let mut guard_plate_shape: Option<GuardPlateShape> = None;
+    let mut guard_plate_curvature: Option<f64> = None;
 
     let mut params = ModelParams::default();
 
@@ -38,15 +41,14 @@ fn main() {
                 if arg + 1 > args.iter().count() || arg + 2 < args.iter().count() {
                     panic!("Please provide a json file")
                 }
-                let mut file =
-                    File::open(args[arg+1].clone()).unwrap();
+                let mut file = File::open(args[arg + 1].clone()).unwrap();
                 let mut json_str = String::from("");
                 file.read_to_string(&mut json_str).unwrap();
-                
+
                 // Deserialize with defaults for missing fields
                 let json_value: serde_json::Value = serde_json::from_str(&json_str).unwrap();
                 let default_params = ModelParams::default();
-                
+
                 // Merge JSON values into default params
                 if let serde_json::Value::Object(map) = json_value {
                     let merged_json = serde_json::to_value(&default_params).unwrap();
@@ -54,7 +56,8 @@ fn main() {
                         for (key, value) in map {
                             merged_map.insert(key, value);
                         }
-                        params = serde_json::from_value(serde_json::Value::Object(merged_map)).unwrap();
+                        params =
+                            serde_json::from_value(serde_json::Value::Object(merged_map)).unwrap();
                     }
                 } else {
                     params = default_params;
@@ -126,6 +129,16 @@ fn main() {
                     }
                 }
             }
+            "-blade-thickness" => {
+                if arg + 1 > args.iter().count() {
+                    panic!("Please provide a blade-thickness value between 0.0 and 1.0")
+                }
+                let parsed = args[arg + 1].parse::<f64>().ok();
+                if parsed.is_none() || parsed.unwrap() < 0.0 || parsed.unwrap() > 1.0 {
+                    panic!("Invalid input: blade-thickness must be between 0.0 and 1.0")
+                }
+                blade_thickness = parsed;
+            }
             "-bladed-edge-count" => {
                 if arg + 1 > args.iter().count() {
                     panic!("Please provide an edge count, valid numbers are 1, 2 or 4")
@@ -157,6 +170,76 @@ fn main() {
                     _ => {
                         panic!(
                             "Please provide a boolean for if the weapon should have a guard, valid options are true or false"
+                        )
+                    }
+                }
+            }
+            "-guard-coverage" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a guard coverage, valid options are Open, Bar, SemiEnclosed, Plate, Shell, Complex, Enclosed"
+                    )
+                }
+                let normalized = args[arg + 1]
+                    .to_lowercase()
+                    .replace('-', "")
+                    .replace('_', "");
+                guard_coverage = Some(match normalized.as_str() {
+                    "open" => GuardCoverage::Open,
+                    "bar" => GuardCoverage::Bar,
+                    "semienclosed" => GuardCoverage::SemiEnclosed,
+                    "plate" => GuardCoverage::Plate,
+                    "shell" => GuardCoverage::Shell,
+                    "complex" => GuardCoverage::Complex,
+                    "enclosed" => GuardCoverage::Enclosed,
+                    _ => {
+                        panic!(
+                            "Please provide a guard coverage, valid options are Open, Bar, SemiEnclosed, Plate, Shell, Complex, Enclosed"
+                        )
+                    }
+                });
+            }
+            "-guard-plate-shape" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a guard plate shape, valid options are Flat, Horseshoe, Dome, Bowl, Upturned"
+                    )
+                }
+                let normalized = args[arg + 1]
+                    .to_lowercase()
+                    .replace('-', "")
+                    .replace('_', "");
+                guard_plate_shape = Some(match normalized.as_str() {
+                    "flat" => GuardPlateShape::Flat,
+                    "horseshoe" => GuardPlateShape::Horseshoe,
+                    "dome" => GuardPlateShape::Dome,
+                    "bowl" => GuardPlateShape::Bowl,
+                    "upturned" => GuardPlateShape::Upturned,
+                    _ => {
+                        panic!(
+                            "Please provide a guard plate shape, valid options are Flat, Horseshoe, Dome, Bowl, Upturned"
+                        )
+                    }
+                });
+            }
+            "-guard-plate-curvature" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a guard plate curvature value between 0.1 and 3.0"
+                    )
+                }
+                match args[arg + 1].parse::<f64>() {
+                    Ok(value) => {
+                        if value < 0.1 || value > 3.0 {
+                            panic!(
+                                "Guard plate curvature must be between 0.1 (shallow) and 3.0 (deep)"
+                            )
+                        }
+                        guard_plate_curvature = Some(value);
+                    }
+                    Err(_) => {
+                        panic!(
+                            "Please provide a valid floating-point number for guard plate curvature"
                         )
                     }
                 }
@@ -201,6 +284,56 @@ fn main() {
                 }
                 blade_angle = num_arg;
             }
+            "-handle-length" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a length for the handle, valid options are Dagger, OneHanded, TwoHanded, ForearmLength, Polearm"
+                    )
+                }
+                match args[arg + 1].to_lowercase().as_str() {
+                    "dagger" => {
+                        handle_length = HandleLength::Dagger;
+                    }
+                    "onehanded" => {
+                        handle_length = HandleLength::OneHanded;
+                    }
+                    "twohanded" => {
+                        handle_length = HandleLength::TwoHanded;
+                    }
+                    "forearmlength" => handle_length = HandleLength::ForearmLength,
+                    "polearm" => handle_length = HandleLength::Polearm,
+                    _ => {
+                        panic!(
+                            "Please provide a length for the handle, valid options are Dagger, OneHanded, TwoHanded, ForearmLength, Polearm"
+                        )
+                    }
+                }
+            }
+            "-blade-type" => {
+                if arg + 1 > args.iter().count() {
+                    panic!(
+                        "Please provide a type for the blade, valid options are Dull, Sharp, Spikey, Serated, SpikeyAndSerated"
+                    )
+                }
+                match args[arg + 1].to_lowercase().as_str() {
+                    "dull" => {
+                        blade_type = BladeType::Dull;
+                    }
+                    "sharp" => {
+                        blade_type = BladeType::Sharp;
+                    }
+                    "spikey" => {
+                        blade_type = BladeType::Spikey;
+                    }
+                    "serated" => blade_type = BladeType::Serated,
+                    "spikeyandserated" => blade_type = BladeType::SpikeyAndSerated,
+                    _ => {
+                        panic!(
+                            "Please provide a type for the blade, valid options are Dull, Sharp, Spikey, Serated, SpikeyAndSerated"
+                        )
+                    }
+                }
+            }
             _ => {
                 continue;
             }
@@ -220,14 +353,28 @@ fn main() {
         params.set_blade_width(blade_width, blade_direction);
         params.set_blade_count(blade_direction, bladed_edge_count);
         params.set_has_guard(has_guard);
+        if let Some(value) = guard_coverage {
+            params.guard_coverage(value);
+        }
+        if let Some(shape) = guard_plate_shape {
+            params.set_guard_plate_shape(shape);
+        }
+        if let Some(curvature) = guard_plate_curvature {
+            params.set_guard_plate_curvature(curvature);
+        }
         params.set_blade_curvature(blade_direction, blade_angle);
+        params.set_handle_length(handle_length);
+        params.set_blade_type(blade_type, blade_direction);
+        if let Some(value) = blade_thickness {
+            params.set_blade_thickness(value);
+        }
     }
     let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z(), params);
 
     //scaling shape to fit inside bounding box (1, 1, 1)
     let mut scaling = params.blade_height + params.blade_bottom;
     scaling += 15.0;
-    if params.v_mirrored {
+    if params.v_mirrored || params.handle_bottom_limit < -1.0 {
         scaling *= 2.0;
     }
     let world_to_model = Matrix4::new_translation(&nalgebra::Vector3::new(0.0, 0.0, 0.0))

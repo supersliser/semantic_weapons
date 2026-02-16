@@ -19,7 +19,7 @@ pub fn get_system_prompt() -> String {
     - blade_thickness: 0-100\n
     - period: Neanderthal, Classical, Medieval, Crusador, Colonial, Industrial, SpaceAge, Contemporary, SciFi\n
     - handle_length: Dagger, OneHanded, TwoHanded, ForearmLength, Polearm\n
-    - blade_type: Sharp, Dull, Serated, Spikey
+    - blade_type: Sharp, Dull, Serated, Spikey, SpikeyAndSerated
     
     Output Format:\n
     Output the weapon parameters in JSON format as shown below:\n
@@ -40,7 +40,7 @@ pub fn get_system_prompt() -> String {
         \"blade_thickness\": <number>,
         \"period\": \"<Neanderthal||Classical||Medieval||Crusador||Colonial||Industrial||SpaceAge||Contemporary||SciFi>\",
         \"handle_length\": \"<Dagger||OneHanded||TwoHanded||ForearmLength||Polearm>\",
-        \"blade_type\": \"<Sharp||Dull||Serated||Spikey>\"
+        \"blade_type\": \"<Sharp||Dull||Serated||Spikey||SpikeyAndSerated>\"
     }
     
     Ensure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON.<|eot_id|>\n\n")

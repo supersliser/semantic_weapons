@@ -1,6 +1,7 @@
 use std::f64;
 
 use serde::{Deserialize, Serialize};
+use crate::weapon_params::GuardPlateShape;
 
 #[derive(Clone, Copy, Deserialize, Serialize, PartialEq)]
 pub struct ModelParams {
@@ -33,8 +34,13 @@ pub struct ModelParams {
     pub guard_bar_radius: f64,
     pub guard_bar_x_scale: f64,
     pub guard_bar_z_scale: f64,
+    pub guard_bar_y_scale: f64,
+    pub guard_bar_thickness: f64,
+    pub guard_bar_height: f64,
     pub guard_bar_curves_back: bool,
     pub guard_bar_bottom_offset: f64,
+    pub guard_plate_shape: GuardPlateShape,
+    pub guard_plate_curvature: f64,
 
     pub blade_bottom: f64,
     pub blade_radius: f64,
@@ -88,8 +94,13 @@ impl Default for ModelParams {
             guard_bar_front_offset: 0.0,
             guard_bar_left_offset: 2.0,
             guard_bar_right_offset: 0.0,
-            guard_bar_radius: 0.1,
+            guard_bar_radius: 0.5,
+            guard_bar_y_scale: 0.8,
+            guard_bar_thickness: 0.3,
+            guard_bar_height: 3.0,
             guard_bar_curves_back: true,
+            guard_plate_shape: GuardPlateShape::Flat,
+            guard_plate_curvature: 1.0,
             blade_bottom: 15.0,
             blade_radius: 5.0,
             blade_front_width: 0.5,
@@ -111,12 +122,12 @@ impl Default for ModelParams {
             blade_serated_left: false,
             blade_serated_left_count: 1.0,
             blade_serated_left_size: 2.0,
-            blade_serated_right: true,
+            blade_serated_right: false,
             blade_serated_right_count: 1.0,
             blade_serated_right_size: 2.0,
-            blade_spiked_left: true,
+            blade_spiked_left: false,
             blade_spiked_left_count: 1.0,
-            blade_spiked_left_size: 2.0,
+            blade_spiked_left_size: 1.0,
             blade_spiked_right: false,
             blade_spiked_right_count: 1.0,
             blade_spiked_right_size: 2.0,

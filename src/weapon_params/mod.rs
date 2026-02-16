@@ -51,7 +51,8 @@ pub enum BladeType {
     Sharp,
     Dull,
     Serated,
-    Spikey
+    Spikey,
+    SpikeyAndSerated,
 }
 
 #[derive(strum::IntoStaticStr, Deserialize, Serialize)]
@@ -80,6 +81,15 @@ pub enum GuardCoverage {
     Shell,
     Complex,
     Enclosed,
+}
+
+#[derive(strum::IntoStaticStr, Deserialize, Serialize, Clone, Copy, PartialEq, Eq)]
+pub enum GuardPlateShape {
+    Flat,
+    Horseshoe,
+    Dome,
+    Bowl,
+    Upturned,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, IntoStaticStr, Serialize, Deserialize)]
