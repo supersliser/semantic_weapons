@@ -1,0 +1,126 @@
+Welcome to semantic weapons. This program is designed to allow you to build a 3D model of a weapon using a semantic description of the character who owns it.
+
+# Prerequisits
+
+You will need:
+- [Cargo/Rust](https://rust-lang.org/tools/install/) Installed
+- A [HuggingFace](https://huggingface.co/) account
+- Access to the [LLama-3.2-3b](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) model
+- A decent graphics card (or TPU chip)
+
+# Setup
+
+Before running the project, you will need to setup a .env file.
+It will need a value called `HF_KEY`. The value for this parameter can be gained by:
+
+1. Going to [HuggingFace Profile Settings](https://huggingface.co/settings/profile)
+2. Scrolling to Access Tokens
+3. Clicking "Create new token"
+4. Make sure the access token has "Read" type.
+5. Paste the value into the .env file
+
+# Running the program
+
+To support a modular approach, the program outputs 3 separate binaries:
+
+- [Prerequisits](#prerequisits)
+- [Setup](#setup)
+- [Running the program](#running-the-program)
+  - [description\_ai](#description_ai)
+  - [conversion\_ai](#conversion_ai)
+  - [weapon\_generator](#weapon_generator)
+    - [Command Line Arguments](#command-line-arguments)
+
+The above list is written in intended order of execution.
+
+If you are new to rust, then you can run an individual binary using the `--bin` command line arguement
+```sh
+cargo run --bin weapon_generator
+```
+
+## description_ai
+
+The purpose of this binary is to convert a character description to a json file format which can be used by the other binaries.
+
+It is ran by using:
+```sh
+cargo run --bin description_ai -- <character_description>
+```
+
+This will create a text file called `output_tests/description_ai_output_<iteration>.txt` where the output from the model is stored by default. As a result of the nature of AI engines, there will often be some text before and or after the json file, therefore requiring an amount of cleanup to form a proper .json file.
+
+By default, this binary will make use of the `llama-3.2-3B-Instruct` ai model. On an RTX-4080, this takes between 4-6 hours to run and will output the generated tokens to both the terminal and the file as it goes.
+
+If you would prefer to use a different AI model (for example Gemini or ChatGPT), you can add the command line arugement `-prompt` to the execution. This will output the entire prompt the terminal and copy it to the clipboard, it can then be run on your ai model of choice with its own output being copied to a json file.`
+```sh
+cargo run --bin description_ai -- <character_description> -prompt
+```
+
+## conversion_ai
+
+> Note: This was a part of the testing, however, I have ultimately decided that this is not a valid feature as it does not produce valid results.
+
+The purpose of this binary is to convert the set of ordinal parameters from the description_ai, to a set of nominal parameters for the weapon_generator.
+
+This uses the same AI model but with a different prompt.
+
+It is ran by using:
+```sh
+cargo run --bin conversion_ai -- <path_to_ordinal_json_file>
+```
+
+This can also be used with a different AI model using the `-prompt` argument.
+```sh
+cargo run --bin conversion_ai -- <path_to_ordinal_json_file> -prompt
+```
+
+This program is expecting a json file of the following schema
+```json
+{
+    "blade_length": "Short/Medium/Long/Great",
+    "blade_width": "Narrow/Standard/Wide",
+    "blade_curvature": Number,
+    "blade_direction": "Left/Central/Right",
+    "blade_count": Number,
+    "has_guard": Boolean,
+    "guard_coverage": "Open/Bar/SemiEnclosed/Plate/Shell/Complex/Enclosed",
+    "blade_thickness": Number,
+    "handle_length": "Dagger/OneHanded/TwoHanded/ForearmLength/Polearm",
+    "blade_type": "Sharp/Dull/Serated/Spikey/SpikeyAndSerated"
+}
+```
+
+> Note: This feature is not required [weapon_generator](#weapon_generator) is capable of taking the ordinal parameter file as I have established manual mappings between the 2 types. That is the intended use of this program, the conversion_ai is designed as an optional method for research and comparison purposes.
+
+## weapon_generator
+
+This is the final stage of this system, it will take either a set of Ordinal parameters or a set of Nominal parameters, and apply the Nominla parameters to an SDF function.
+
+To use this binary run:
+```sh
+cargo run --bin weapon_generator --
+```
+
+This will generate a file called `out.stl` which will contain a mesh representation of the implicit surface.
+Due to a lack of support in most 3D DCC tools, the system will automatically process the surface into a mesh using an algorithm called "Manifold Duel Contouring".
+
+### Command Line Arguments
+
+| Name     | type    | default | description                                                                                                                                                                                             |
+| -------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-quality` | integer | 10      | Controls the qualiyt of the meshing algorithm. Each quality increase results in time taken increase of 4(n-1) where n is the current quality level. For reference: level 10 takes on average 4 seconds. |
+| `-f` | file | null | Inputs a file of Nominal data (data generated by [conversion_ai](#conversion_ai))|
+| `-s` | file | null | Inputs a file of Ordinal / Semantic data (generated by [description_ai](#description_ai))|
+| `-blade-length` | short/medium/long/great | medium | The length of the blade|
+| `-blade-width` | narrow/standart/wide| standard | The width of the blade |
+| `-blade-thickness` | float | 20.0 | the thickness of the blade|
+| `-bladed-edge-count` | integer | 2 | the number of blades the sword has, 4 blades makes the blade double sided about the handle|
+| `-has-guard` | boolean | true | whether the sword has a hand guard |
+| `-guard-coverage` | open/bar/semienclosed/plate/shell/complex/enclosed | bar | the type of guard on the sword|
+| `-guard-plate-shape` | flat/horseshoe/dome/bowl/bowlcapped/upturned | flat | the curved shape of the guard on the sword|
+| `-guard-plate-curvature` | float | 1.0 | the strength of the `-guard-plate-shape`, between 0.1-3.0|
+| `-blade-direction` | left/central/right | central | the direction for multiple parameters|
+|`-blade-bend` | integer | 0 | the strength of the bend in the blade, between 0 and 90|
+|`-handle-length` | dagger/onehanded/twohanded/forearmlength/polearm | twohanded | the length of the handle of the blade|
+|`-blade-type`| dull/sharp/spikey/serated/spikeyandserated | sharp | the type of blade on the sword|
+

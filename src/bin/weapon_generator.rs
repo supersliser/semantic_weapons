@@ -6,36 +6,25 @@ use fidget::{
 use nalgebra::Matrix4;
 use semantic_weapons::{
     model_generator::{create_basic_weapon, model_params::ModelParams},
-    weapon_params::{BladeLength, BladeType, BladeWidth, Direction, GuardCoverage, GuardPlateShape, HandleLength},
+    weapon_params::{BladeLength, BladeType, BladeWidth, Direction, GuardCoverage, GuardPlateShape, HandleLength, WeaponParams},
 };
 
-use std::{env, fs::File, io::Read, time::SystemTime};
+use std::{env, fs::File, io::{Read, Write}, time::SystemTime};
 
 fn main() {
     let start = SystemTime::now();
 
     let mut quality: u8 = 10;
-    let mut blade_length = BladeLength::Medium;
-    let mut blade_width = BladeWidth::Standard;
-    let mut bladed_edge_count: u8 = 2;
-    let mut has_guard = true;
-    let mut blade_direction = Direction::Central;
-    let mut blade_angle = 0;
-    let mut handle_length = HandleLength::TwoHanded;
-    let mut blade_type = BladeType::Sharp;
-    let mut blade_thickness: Option<f64> = None;
-    let mut guard_coverage: Option<GuardCoverage> = None;
-    let mut guard_plate_shape: Option<GuardPlateShape> = None;
-    let mut guard_plate_curvature: Option<f64> = None;
 
     let mut params = ModelParams::default();
+    let mut semantic = WeaponParams::default();
 
     let args: Vec<String> = env::args().collect();
     if args.iter().count() <= 1 {
         panic!("Please make sure to provide arguements")
     }
     let mut loaded_from_json = false;
-    for arg in 0..args.iter().count() - 1 {
+    for arg in 1..args.iter().count() {
         match args[arg].as_str() {
             "-f" => {
                 if arg + 1 > args.iter().count() || arg + 2 < args.iter().count() {
@@ -65,6 +54,32 @@ fn main() {
                 loaded_from_json = true;
                 break;
             }
+            "-s" => {
+                if arg + 1 > args.iter().count() || arg + 2 < args.iter().count() {
+                    panic!("Please provide a valid json file")
+                }
+                let mut file = File::open(args[arg + 1].clone()).unwrap();
+                let mut json_str = String::from("");
+                file.read_to_string(&mut json_str).unwrap();
+
+                // Deserialize with defaults for missing fields
+                let json_value: serde_json::Value = serde_json::from_str(&json_str).unwrap();
+                let default_params = WeaponParams::default();
+
+                // Merge JSON values into default params
+                if let serde_json::Value::Object(map) = json_value {
+                    let merged_json = serde_json::to_value(&default_params).unwrap();
+                    if let serde_json::Value::Object(mut merged_map) = merged_json {
+                        for (key, value) in map {
+                            merged_map.insert(key, value);
+                        }
+                        semantic =
+                            serde_json::from_value(serde_json::Value::Object(merged_map)).unwrap();
+                    }
+                } else {
+                    semantic = default_params;
+                }
+            }
             "-quality" => {
                 if arg + 1 > args.iter().count() {
                     panic!(
@@ -86,25 +101,26 @@ fn main() {
                         "Please provide a blade-length value, valid options are Short, Medium, Long and Great"
                     )
                 }
-                match args[arg + 1].to_lowercase().as_str() {
-                    "short" => {
-                        blade_length = BladeLength::Short;
-                    }
-                    "medium" => {
-                        blade_length = BladeLength::Medium;
-                    }
-                    "long" => {
-                        blade_length = BladeLength::Long;
-                    }
-                    "great" => {
-                        blade_length = BladeLength::Great;
-                    }
+                semantic.blade_length = Some(match args[arg + 1].to_lowercase().as_str() {
+                    "short" => 
+                        BladeLength::Short,
+                    
+                    "medium" => 
+                        BladeLength::Medium,
+                    
+                    "long" => 
+                        BladeLength::Long,
+                   
+                    "great" => 
+                        BladeLength::Great,
+                    
                     _ => {
                         panic!(
                             "Please provide a blade-length value, valid options are Short, Medium, Long and Great"
                         )
                     }
-                }
+                
+                }).unwrap();
             }
             "-blade-width" => {
                 if arg + 1 > args.iter().count() {
@@ -112,32 +128,32 @@ fn main() {
                         "Please provide a blade-width value, valid options are Narrow, Standard, Wide"
                     )
                 }
-                match args[arg + 1].to_lowercase().as_str() {
-                    "narrow" => {
-                        blade_width = BladeWidth::Narrow;
-                    }
-                    "standard" => {
-                        blade_width = BladeWidth::Standard;
-                    }
-                    "wide" => {
-                        blade_width = BladeWidth::Wide;
-                    }
+                semantic.blade_width = Some(match args[arg + 1].to_lowercase().as_str() {
+                    "narrow" => 
+                        BladeWidth::Narrow,
+                    
+                    "standard" => 
+                        BladeWidth::Standard,
+                    
+                    "wide" => 
+                        BladeWidth::Wide,
+                    
                     _ => {
                         panic!(
                             "Please provide a blade-width value, valid options are Narrow, Standard, Wide"
                         )
                     }
-                }
+                }).unwrap();
             }
             "-blade-thickness" => {
                 if arg + 1 > args.iter().count() {
-                    panic!("Please provide a blade-thickness value between 0.0 and 1.0")
+                    panic!("Please provide a blade-thickness value between 0.0 and 100.0")
                 }
                 let parsed = args[arg + 1].parse::<f64>().ok();
-                if parsed.is_none() || parsed.unwrap() < 0.0 || parsed.unwrap() > 1.0 {
-                    panic!("Invalid input: blade-thickness must be between 0.0 and 1.0")
+                if parsed.is_none() || parsed.unwrap() < 0.0 || parsed.unwrap() > 100.0 {
+                    panic!("Invalid input: blade-thickness must be between 0.0 and 100.0")
                 }
-                blade_thickness = parsed;
+                semantic.blade_thickness = parsed.unwrap();
             }
             "-bladed-edge-count" => {
                 if arg + 1 > args.iter().count() {
@@ -152,7 +168,7 @@ fn main() {
                         "Invalid input: Please provide a quality number between 1 and 255 inclusively"
                     )
                 }
-                bladed_edge_count = args[arg + 1].parse::<u8>().unwrap();
+                semantic.blade_count = args[arg + 1].parse::<u8>().unwrap();
             }
             "-has-guard" => {
                 if arg + 1 > args.iter().count() {
@@ -160,19 +176,17 @@ fn main() {
                         "Please provide a boolean for if the weapon should have a guard, valid options are true or false"
                     )
                 }
-                match args[arg + 1].to_lowercase().as_str() {
-                    "true" => {
-                        has_guard = true;
-                    }
-                    "false" => {
-                        has_guard = false;
-                    }
+                semantic.has_guard = Some(match args[arg + 1].to_lowercase().as_str() {
+                    "true" => 
+                        true,
+                    "false" => 
+                        false,
                     _ => {
                         panic!(
                             "Please provide a boolean for if the weapon should have a guard, valid options are true or false"
                         )
                     }
-                }
+                }).unwrap();
             }
             "-guard-coverage" => {
                 if arg + 1 > args.iter().count() {
@@ -184,7 +198,7 @@ fn main() {
                     .to_lowercase()
                     .replace('-', "")
                     .replace('_', "");
-                guard_coverage = Some(match normalized.as_str() {
+                semantic.guard_coverage = Some(match normalized.as_str() {
                     "open" => GuardCoverage::Open,
                     "bar" => GuardCoverage::Bar,
                     "semienclosed" => GuardCoverage::SemiEnclosed,
@@ -197,7 +211,7 @@ fn main() {
                             "Please provide a guard coverage, valid options are Open, Bar, SemiEnclosed, Plate, Shell, Complex, Enclosed"
                         )
                     }
-                });
+                }).unwrap();
             }
             "-guard-plate-shape" => {
                 if arg + 1 > args.iter().count() {
@@ -209,7 +223,7 @@ fn main() {
                     .to_lowercase()
                     .replace('-', "")
                     .replace('_', "");
-                guard_plate_shape = Some(match normalized.as_str() {
+                semantic.guard_plate_shape = Some(match normalized.as_str() {
                     "flat" => GuardPlateShape::Flat,
                     "horseshoe" => GuardPlateShape::Horseshoe,
                     "dome" => GuardPlateShape::Dome,
@@ -221,7 +235,7 @@ fn main() {
                             "Please provide a guard plate shape, valid options are Flat, Horseshoe, Dome, Bowl, BowlCapped, Upturned"
                         )
                     }
-                });
+                }).unwrap();
             }
             "-guard-plate-curvature" => {
                 if arg + 1 > args.iter().count() {
@@ -236,7 +250,7 @@ fn main() {
                                 "Guard plate curvature must be between 0.1 (shallow) and 3.0 (deep)"
                             )
                         }
-                        guard_plate_curvature = Some(value);
+                        semantic.guard_plate_curvature = Some(value).unwrap();
                     }
                     Err(_) => {
                         panic!(
@@ -251,22 +265,22 @@ fn main() {
                         "Please provide a direction for the curve of the blade, valid options are left, central or right"
                     )
                 }
-                match args[arg + 1].to_lowercase().as_str() {
-                    "left" => {
-                        blade_direction = Direction::Left;
-                    }
-                    "right" => {
-                        blade_direction = Direction::Right;
-                    }
-                    "central" => {
-                        blade_direction = Direction::Central;
-                    }
+                semantic.blade_direction = Some(match args[arg + 1].to_lowercase().as_str() {
+                    "left" => 
+                        Direction::Left,
+                    
+                    "right" => 
+                        Direction::Right,
+                    
+                    "central" => 
+                        Direction::Central,
+                    
                     _ => {
                         panic!(
                             "Please provide a valid direction for the blade, either left, central or right"
                         )
                     }
-                }
+                }).unwrap();
             }
             "-blade-bend" => {
                 if arg + 1 > args.iter().count() {
@@ -283,7 +297,7 @@ fn main() {
                 if num_arg > 90 {
                     panic!("Please provide a number between 0 and 90")
                 }
-                blade_angle = num_arg;
+                semantic.blade_curvature = num_arg as f64;
             }
             "-handle-length" => {
                 if arg + 1 > args.iter().count() {
@@ -291,24 +305,24 @@ fn main() {
                         "Please provide a length for the handle, valid options are Dagger, OneHanded, TwoHanded, ForearmLength, Polearm"
                     )
                 }
-                match args[arg + 1].to_lowercase().as_str() {
-                    "dagger" => {
-                        handle_length = HandleLength::Dagger;
-                    }
-                    "onehanded" => {
-                        handle_length = HandleLength::OneHanded;
-                    }
-                    "twohanded" => {
-                        handle_length = HandleLength::TwoHanded;
-                    }
-                    "forearmlength" => handle_length = HandleLength::ForearmLength,
-                    "polearm" => handle_length = HandleLength::Polearm,
+                semantic.handle_length = Some(match args[arg + 1].to_lowercase().as_str() {
+                    "dagger" => 
+                        HandleLength::Dagger,
+                    
+                    "onehanded" => 
+                        HandleLength::OneHanded,
+                    
+                    "twohanded" => 
+                        HandleLength::TwoHanded,
+                    
+                    "forearmlength" => HandleLength::ForearmLength,
+                    "polearm" => HandleLength::Polearm,
                     _ => {
                         panic!(
                             "Please provide a length for the handle, valid options are Dagger, OneHanded, TwoHanded, ForearmLength, Polearm"
                         )
                     }
-                }
+                }).unwrap();
             }
             "-blade-type" => {
                 if arg + 1 > args.iter().count() {
@@ -316,24 +330,24 @@ fn main() {
                         "Please provide a type for the blade, valid options are Dull, Sharp, Spikey, Serated, SpikeyAndSerated"
                     )
                 }
-                match args[arg + 1].to_lowercase().as_str() {
-                    "dull" => {
-                        blade_type = BladeType::Dull;
-                    }
-                    "sharp" => {
-                        blade_type = BladeType::Sharp;
-                    }
-                    "spikey" => {
-                        blade_type = BladeType::Spikey;
-                    }
-                    "serated" => blade_type = BladeType::Serated,
-                    "spikeyandserated" => blade_type = BladeType::SpikeyAndSerated,
+                semantic.blade_type = Some(match args[arg + 1].to_lowercase().as_str() {
+                    "dull" => 
+                        BladeType::Dull,
+                    
+                    "sharp" => 
+                        BladeType::Sharp,
+                    
+                    "spikey" => 
+                        BladeType::Spikey,
+                    
+                    "serated" => BladeType::Serated,
+                    "spikeyandserated" => BladeType::SpikeyAndSerated,
                     _ => {
                         panic!(
                             "Please provide a type for the blade, valid options are Dull, Sharp, Spikey, Serated, SpikeyAndSerated"
                         )
                     }
-                }
+                }).unwrap();
             }
             _ => {
                 continue;
@@ -341,8 +355,8 @@ fn main() {
         }
     }
 
-    if (blade_direction == Direction::Central && blade_angle != 0)
-        || (bladed_edge_count == 1 && blade_direction == Direction::Central)
+    if (semantic.blade_direction == Direction::Central && semantic.blade_curvature != 0.0)
+        || (semantic.blade_count == 1 && semantic.blade_direction == Direction::Central)
     {
         panic!(
             "You have provided a parameter that requires the -blade-direction argument, please provide this data as either left or right"
@@ -350,26 +364,18 @@ fn main() {
     }
 
     if params == ModelParams::default() && !loaded_from_json {
-        params.set_blade_length(blade_length);
-        params.set_blade_width(blade_width, blade_direction);
-        params.set_blade_count(blade_direction, bladed_edge_count);
-        params.set_has_guard(has_guard);
-        if let Some(value) = guard_coverage {
-            params.guard_coverage(value);
-        }
-        if let Some(shape) = guard_plate_shape {
-            params.set_guard_plate_shape(shape);
-        }
-        if let Some(curvature) = guard_plate_curvature {
-            params.set_guard_plate_curvature(curvature);
-        }
-        params.set_blade_curvature(blade_direction, blade_angle);
-        params.set_handle_length(handle_length);
-        params.set_blade_type(blade_type, blade_direction);
-        if let Some(value) = blade_thickness {
-            params.set_blade_thickness(value);
-        }
-    }
+        params.set_blade_length(semantic.blade_length);
+        params.set_blade_width(semantic.blade_width, semantic.blade_direction);
+        params.set_blade_count(semantic.blade_direction, semantic.blade_count);
+        params.set_has_guard(semantic.has_guard);
+            params.guard_coverage(semantic.guard_coverage);
+            params.set_guard_plate_shape(semantic.guard_plate_shape);
+            params.set_guard_plate_curvature(semantic.guard_plate_curvature);
+        params.set_blade_curvature(semantic.blade_direction, semantic.blade_curvature as u8);
+        params.set_handle_length(semantic.handle_length);
+        params.set_blade_type(semantic.blade_type, semantic.blade_direction);
+            params.set_blade_thickness(semantic.blade_thickness);
+}
     let sdf = create_basic_weapon(Tree::x(), Tree::y(), Tree::z(), params);
 
     //scaling shape to fit inside bounding box (1, 1, 1)
