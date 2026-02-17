@@ -89,6 +89,7 @@ pub enum GuardPlateShape {
     Horseshoe,
     Dome,
     Bowl,
+    BowlCapped,
     Upturned,
 }
 

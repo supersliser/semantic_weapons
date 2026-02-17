@@ -266,7 +266,7 @@ fn guard_shape_horseshoe(
     let z_scale = guard_left_stop.max(guard_right_stop).max(1.0);
     let x_norm = x.clone() / x_scale;
     let z_norm = z.clone() / z_scale;
-    let radial_dist = x_norm.clone() * x_norm.clone() + z_norm.clone() * z_norm.clone();
+    let radial_dist = (x_norm.clone() * x_norm.clone() + z_norm.clone() * z_norm.clone()).min(1.0);
     
     // Curvature factor: higher curvature = tighter inward curve
     // Clamp so stops never expand outward (prevents unbounded plate)
@@ -306,14 +306,17 @@ fn guard_shape_dome(
     
     // Dome height decreases from center to edges
     // Using a simple quadratic dome: height = max_height * (1 - r^2)
-    let max_dome_height = 2.0 * curvature;
+    let max_dome_height = 0.8 * curvature;
     let dome_height = ((1.0 - radial_dist.clone()) as Tree).max(0.0) * max_dome_height;
-    
-    // The constraint: y would need to be below dome_surface to be inside
-    let y_at_radius = guard_bottom - dome_height;
-    
-    // Combine with planar constraints for plate sides
-    let y_constraint = (y.clone() + guard_bottom).max(y.clone() - y_at_radius);
+
+    // Match the bowl bottom profile for a consistent underside
+    let max_bowl_depth = 0.8 * curvature;
+    let bowl_depth = ((1.0 - radial_dist.clone()) as Tree).max(0.0) * max_bowl_depth;
+
+    // Bound y between bottom (bowl) and top (dome) surfaces
+    let y_top = -guard_bottom + dome_height;
+    let y_bottom = -guard_bottom - bowl_depth;
+    let y_constraint = (y.clone() - y_top).max(y_bottom - y.clone());
     
     let front_constraint = -x.clone() - guard_front_stop;
     let back_constraint = x.clone() - guard_back_stop;
@@ -345,18 +348,20 @@ fn guard_shape_bowl(
     let x_norm = x.clone() / x_max;
     let z_norm = z.clone() / z_max;
     
-    // Radial distance from center (squared, no sqrt for speed)
-    let radial_dist = x_norm.clone() * x_norm.clone() + z_norm.clone() * z_norm.clone();
+    // Radial distance from center (squared, clamped for stability)
+    let radial_dist = (x_norm.clone() * x_norm.clone() + z_norm.clone() * z_norm.clone()).min(1.0);
     
-    // Bowl depth increases with curvature
-    // At center (r=0): depth = 0
-    // At edges (r=1): depth = bowl_depth
-    let max_bowl_depth = 3.0 * curvature;
-    let bowl_depth = radial_dist.clone() * max_bowl_depth;
+    // Bowl depth increases toward the center (concave down)
+    // At center (r=0): depth = max_bowl_depth
+    // At edges (r=1): depth = 0
+    // Keep the bowl shallow so it does not consume the handle length
+    let max_bowl_depth = 0.8 * curvature;
+    let bowl_depth = ((1.0 - radial_dist.clone()) as Tree).max(0.0) * max_bowl_depth;
     
-    // Y constraint: bowl surface slopes downward from center
-    let bowl_surface_y = guard_bottom + bowl_depth;
-    let y_constraint = y.clone() - bowl_surface_y;
+    // Y constraint: center dips downward from the plate plane
+    let bowl_surface_y = -guard_bottom - bowl_depth;
+    let bottom_limit = -guard_bottom - max_bowl_depth - (0.2 * curvature);
+    let y_constraint = (y.clone() - bowl_surface_y).max(bottom_limit - y.clone());
     
     // Planar constraints are curved by the radial distance
     // At center, stops are minimal; at edges, stops expand
@@ -367,6 +372,49 @@ fn guard_shape_bowl(
     let left_constraint = -z.clone() - guard_left_stop * stop_scale.clone();
     let right_constraint = z.clone() - guard_right_stop * stop_scale.clone();
     
+    y_constraint.max(front_constraint).max(left_constraint).max(right_constraint).max(back_constraint)
+}
+
+/// Capped bowl guard plate (concave top and bottom with shared profile)
+/// Creates a shell-like bowl with a curved top matching the curved underside
+fn guard_shape_bowl_capped(
+    x: Tree,
+    y: Tree,
+    z: Tree,
+    guard_bottom: f64,
+    guard_front_stop: f64,
+    guard_back_stop: f64,
+    guard_left_stop: f64,
+    guard_right_stop: f64,
+    curvature: f64,
+) -> Tree {
+    // Normalize coordinates to [-1, 1] range based on plate extents
+    let x_max = guard_front_stop.max(guard_back_stop).max(1.0);
+    let z_max = guard_left_stop.max(guard_right_stop).max(1.0);
+    let x_norm = x.clone() / x_max;
+    let z_norm = z.clone() / z_max;
+
+    // Radial distance from center (squared, clamped for stability)
+    let radial_dist = (x_norm.clone() * x_norm.clone() + z_norm.clone() * z_norm.clone()).min(1.0);
+
+    // Shared concave profile for both top and bottom
+    let max_bowl_depth = 0.8 * curvature;
+    let bowl_depth = ((1.0 - radial_dist.clone()) as Tree).max(0.0) * max_bowl_depth;
+
+    // Top and bottom surfaces share the same curvature profile
+    let y_top = -guard_bottom - bowl_depth;
+    let thickness = 0.4 * curvature + 0.2;
+    let y_bottom = y_top.clone()- thickness;
+    let y_constraint = (y.clone() - y_top.clone()).max(y_bottom - y.clone());
+
+    // Planar constraints are curved by the radial distance
+    let stop_scale: Tree = 1.0 + radial_dist.clone() * (curvature - 1.0).max(0.0);
+
+    let front_constraint = -x.clone() - guard_front_stop * stop_scale.clone();
+    let back_constraint = x.clone() - guard_back_stop * stop_scale.clone();
+    let left_constraint = -z.clone() - guard_left_stop * stop_scale.clone();
+    let right_constraint = z.clone() - guard_right_stop * stop_scale.clone();
+
     y_constraint.max(front_constraint).max(left_constraint).max(right_constraint).max(back_constraint)
 }
 
@@ -389,15 +437,18 @@ fn guard_shape_upturned(
     let x_norm = x.clone() / x_max;
     let z_norm = z.clone() / z_max;
 
-    // Radial distance from center (squared, no sqrt for speed)
-    let radial_dist = x_norm.clone() * x_norm.clone() + z_norm.clone() * z_norm.clone();
+    // Radial distance from center (squared, clamped for stability)
+    let radial_dist = (x_norm.clone() * x_norm.clone() + z_norm.clone() * z_norm.clone()).min(1.0);
 
-    // Upturn height increases toward the edges
-    let max_upturn = 2.0 * curvature;
-    let upturn = radial_dist.clone() * max_upturn;
+    // Shared profile, but flipped upward (opposite of bowl-capped)
+    let max_upturn = 0.8 * curvature;
+    let upturn = ((1.0 - radial_dist.clone()) as Tree).max(0.0) * max_upturn;
 
-    // Y constraint: edges can rise higher than the center
-    let y_constraint = y.clone() + guard_bottom - upturn;
+    // Top and bottom surfaces share the same curvature profile
+let y_top = -guard_bottom + upturn - 0.5;
+    let thickness = 0.4 * curvature + 0.2;
+    let y_bottom = y_top.clone() - thickness;
+    let y_constraint = (y.clone() - y_top.clone()).max(y_bottom - y.clone());
 
     let front_constraint = -x.clone() - guard_front_stop;
     let back_constraint = x.clone() - guard_back_stop;
@@ -449,6 +500,15 @@ fn guard_shape(
         }
         GuardPlateShape::Bowl => {
             guard_shape_bowl(
+                x, y, z,
+                guard_bottom,
+                guard_front_stop, guard_back_stop,
+                guard_left_stop, guard_right_stop,
+                guard_plate_curvature,
+            )
+        }
+        GuardPlateShape::BowlCapped => {
+            guard_shape_bowl_capped(
                 x, y, z,
                 guard_bottom,
                 guard_front_stop, guard_back_stop,

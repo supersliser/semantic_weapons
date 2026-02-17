@@ -202,7 +202,7 @@ fn main() {
             "-guard-plate-shape" => {
                 if arg + 1 > args.iter().count() {
                     panic!(
-                        "Please provide a guard plate shape, valid options are Flat, Horseshoe, Dome, Bowl, Upturned"
+                        "Please provide a guard plate shape, valid options are Flat, Horseshoe, Dome, Bowl, BowlCapped, Upturned"
                     )
                 }
                 let normalized = args[arg + 1]
@@ -214,10 +214,11 @@ fn main() {
                     "horseshoe" => GuardPlateShape::Horseshoe,
                     "dome" => GuardPlateShape::Dome,
                     "bowl" => GuardPlateShape::Bowl,
+                    "bowlcapped" => GuardPlateShape::BowlCapped,
                     "upturned" => GuardPlateShape::Upturned,
                     _ => {
                         panic!(
-                            "Please provide a guard plate shape, valid options are Flat, Horseshoe, Dome, Bowl, Upturned"
+                            "Please provide a guard plate shape, valid options are Flat, Horseshoe, Dome, Bowl, BowlCapped, Upturned"
                         )
                     }
                 });
