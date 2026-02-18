@@ -92,13 +92,62 @@ As a result of all of this, it makes natural sense that many would seek to allow
 
 The wish of AI assisted computer graphics is not for the skills of those using Maya and DCC tools to become lost souls with no work whom were replaced by AI, rather, their job should become increasingly important and simply take less time as the ``easy parts'' can be done by the 5th generation language, leaving optimisation and bug-fixing to the 3rd generation experts.
 
+\pagebreak
+
 \section{Background} \label{background}
+
+\subsection{Generative AI meets 3D} \label{back1}
+
+\cite{li2023generative}
+
+As I mentioned in section \ref{intro}, the field of Aritifial Intelligence has been attempting to combine with 3D computer graphics for some time. This piece discusses the various ways in which Gen AI is being trained, and the types of data being used to train them for this purpose. The most important distinction it makes between data types is the difference between \textbf{structured} and \textbf{non-structured} data. Where structured data includes voxels and multi-view images due to their grid-like representation, and non-structured data includes 3D meshes and point clouds due to their lack of organisation within the structure.
+
+The thing that stands out most to me is how these systems to do not appear to consider some form of intermediary system, they fail to take into account that an \gls{llm} is ultimately a \gls{semantic} system; They would prefer to input text and just get a 3D model without an intermediary system to help the translation. They also seem remarkably generic, focussing on a system that can generate any model. As has been found time and time again in the realm of programming (\cite{mernik2005and}, \cite{negm2019survey}, \cite{hennessy2019new}, \cite{brown2011heterogeneous}, \cite{gerofi2017toward}), specialised systems will always outperform systems designed with no clear purpose in mind, and they will be outperformed in terms of results, speed, energy efficieny and even complexity. As such, an AI system specifically designed to build 1 type of 3D object (melee weaponry in this case), will be superior to a system that tries to do \textit{everything}.
+
+\subsection{Introduction to implicit surfaces} \label{back2}
+
+\cite{bloomenthal1997introduction}
+
+As is discussed in section \ref{back1}, there are many ways in which computer systems can understand an object in 3D spaces. However, one way which doesnt seem to have been considered is that of an SDF, also known as an implicit surface. In the "Introduction to implicit surfaces", we get an exploration in to the basics behind this purely mathematical representation of 3D objects. We are shown that any object can be expressed as a function of a point in space\footnote{It is worth noting, this does not have to be 3D, as the book describes that the point should simply be represented as the point \textit{P} as it can then work in other dimensionalities such as 2D or 5D if necessary.}, where this function equalling 0 is representative of the surface of the object. One of the benefits of this system is that it retains the benefits of a vectorised representation over a bitmap representation of an image in 2D space \parencite{graphics2005vector}. In such, the mesh method of representing a 3D object could be considered comparable to a bitmap due to its lack of infinite scaling posibility. A capacity which is held by implicit surfaces. The other main benefit (especially beneficial for our purposes), is that it can be stored in a purely mathematical format, thus allowing for textual storage and representation of an object.
+
+\subsection{A study of Swords}
+
+\cite{lower2024Swords}
+
+This piece was written by me in an earlier project to study the use of swords and their ability to express or contribute to a narrative. In this I explored the idea that weaponry can be used to contribute directly to a narrative rather than simply being a secondary accessory to such. I felt that weapons are too frequently only able to contribute to a narrative as a tool, something that must be used to add to the story. And as such if they are simply decorative, their existance does not contribute. In a way I wished to show that Chekov's gun could be fired without even being picked up, provided it was handled correctly. This project laid the foundations for \textbf{Semantic Weaponry} as the initial motivation towards developing this technology.
+
+\pagebreak
 
 \section{Implementation} \label{impl}
 
+The intended technology was the implementation of a system which can generate a 3D model of a weapon from the description of a character. This system would originally have 2 distinct stages:
+
+\begin{enumerate}
+    \item Converting the character description to a set of parameters
+    \item Converting the parameters to a 3D object
+\end{enumerate}
+
+My intention was that only item 1 would involve the use of artificial intelligence as I believed that better results could be achieved with a predefined formula for a weapon, especially knowing the basic template of the object being some form of sword. This massively decreases the level of adaptability that the system needs to be capable of performing.
+
+\subsection{Three Staged Approach}
+
+As mentioned in section \ref{impl}, the original intention was to utilise 2 distinct stages, however, this was under the impression that the system would utilise direct mesh generation / editing. It was only on a further analysis that the use of implicit surfaces became a more effective possibility, such which would require a 3rd stage to act as an intermediary between the 2 preexistant ones.
+
+\subsection{Where AI makes sense}
+
+\subsection{Remeshing}
+
 \section{Results} \label{results}
 
+\subsection{With a conversion AI}
+
+\subsection{Without a conversion AI}
+
+\subsection{Local vs Cloud AI}
+
 \section{Conclusion} \label{conclusion}
+
+% talk about how the next research to be done should involve having the AI generate the implicit surfaces directly.
 
 \printbibliography
 
