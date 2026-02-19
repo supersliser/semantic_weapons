@@ -1,7 +1,7 @@
 /target
 .env
 Cargo.lock
-out.stl
+*.stl
 .hf_cache/
 
 paper/*

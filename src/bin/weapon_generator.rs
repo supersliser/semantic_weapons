@@ -55,9 +55,6 @@ fn main() {
                 break;
             }
             "-s" => {
-                if arg + 1 > args.iter().count() || arg + 2 < args.iter().count() {
-                    panic!("Please provide a valid json file")
-                }
                 let mut file = File::open(args[arg + 1].clone()).unwrap();
                 let mut json_str = String::from("");
                 file.read_to_string(&mut json_str).unwrap();

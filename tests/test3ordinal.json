@@ -1,0 +1,19 @@
+{
+"blade_length": "Long",
+"blade_width": "Wide",
+"blade_curvature": 5.0,
+"blade_direction": "Left",
+"blade_count": 1,
+"has_guard": false,
+"handle_material": "Leather",
+"guard_material": "Steel",
+"guard_coverage": "Open",
+"pommel_material": "Iron",
+"blade_material": "Steel",
+"age": 15.0,
+"ornamental_level": 0.1,
+"blade_thickness": 85,
+"period": "Industrial",
+"handle_length": "TwoHanded",
+"blade_type": "Sharp"
+}

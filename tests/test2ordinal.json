@@ -1,0 +1,19 @@
+{
+    "blade_length": "Long",
+    "blade_width": "Narrow",
+    "blade_curvature": 15.0,
+    "blade_direction": "Right",
+    "blade_count": 1,
+    "has_guard": true,
+    "handle_material": "Synthetic",
+    "guard_material": "Titanium",
+    "guard_coverage": "Bar",
+    "pommel_material": "Steel",
+    "blade_material": "Titanium",
+    "age": 3.5,
+    "ornamental_level": 0.2,
+    "blade_thickness": 25,
+    "period": "SciFi",
+    "handle_length": "TwoHanded",
+    "blade_type": "Sharp"
+}

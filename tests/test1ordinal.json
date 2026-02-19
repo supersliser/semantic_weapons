@@ -1,0 +1,19 @@
+{
+"blade_length": "Long",
+"blade_width": "Narrow",
+"blade_curvature": 15.0,
+"blade_direction": "Left",
+"blade_count": 1,
+"has_guard": true,
+"handle_material": "Leather",
+"guard_material": "Mithril",
+"guard_coverage": "Complex",
+"pommel_material": "Mithril",
+"blade_material": "Mithril",
+"age": 150.0,
+"ornamental_level": 0.8,
+"blade_thickness": 25,
+"period": "SciFi",
+"handle_length": "OneHanded",
+"blade_type": "SpikeyAndSerated"
+}
