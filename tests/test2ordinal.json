@@ -8,6 +8,8 @@
     "handle_material": "Synthetic",
     "guard_material": "Titanium",
     "guard_coverage": "Bar",
+    "guard_plate_shape": "Dome",
+    "guard_plate_curvature": 1.0,
     "pommel_material": "Steel",
     "blade_material": "Titanium",
     "age": 3.5,

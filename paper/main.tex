@@ -5,7 +5,7 @@
 \usepackage{setspace}
 \usepackage[toc, acronym]{glossaries}
 \doublespacing
-
+\usepackage{wrapfig}
 \usepackage[backend=biber, style=apa, sorting=nyt]{biblatex}
 \addbibresource[]{ref.bib}
 \usepackage{wrapfig}
@@ -26,7 +26,6 @@
 }
 
 \graphicspath{{./images/}}
-\graphicspath{{../tests/}}
 
 \title{Semantic Weaponry}
 \author{Thomas Lower\\
@@ -87,7 +86,7 @@ For the purposes of this paper, AI will be defined in the way in which the UK Go
 
 This definition has been chosen as it is not overly specific to the functionality, without being too abstract that it could include an overwhelming number of concepts. Furthermore, its agreement by the legal background of this country provides confidence in its functionality as a strong definition.
 
-\subsection{Gen AI}
+\subsection{Gen AI} \label{genAi}
 
 Generative AI (gen ai) is a specific functionality of artificial intelligence systems in which the system is able transform a textual prompt of \gls{semantic} information into an output with some form of creative simulation. 3 of the biggest use cases of this are: futher textual data, programming code and even images or video. For the purposes of this exploration, I first wish to focus upon programming code.
 
@@ -178,10 +177,11 @@ All three of these can be customised individually to form many unique patterns f
 
 While it is not an integral part of the functionality of the program. A concern for many use cases of such a tool would be compatability with other \gls{dcc} tools, most of which would not have direct support for implict surface functions. Thus, it is necessary for the accessibility of the program to be able to convert it to a mesh that can be used in any other tool or techonology. The most frequently used algorithm for such a \textit{remeshing} task is known as "Marching Cubes" \parencite{lorensen1987marching}. This algorithm has issues with preserving sharp edges and details, an extremely important feature for a program for generating swords. Thus a different algorithm with better precision on these sharp details was necessary. Ultimately, an algorithm named "Manifold Duel Contouring" was selected instead for its strength with handling sharper details and edges \parencite{schaefer2007manifold}.
 
+\pagebreak
+
 \section{Results} \label{results}
 
-\begin{figure}
-    \label{resultsimgs}
+\begin{figure}[h]
     \begin{subfigure}{0.5\textwidth}
         \includegraphics[width=\linewidth]{test1.png}
         \caption{Result of prompt \ref{resPrompt1}}
@@ -203,17 +203,99 @@ While it is not an integral part of the functionality of the program. A concern 
         \label{res4}
     \end{subfigure}
     \caption{A set of images showing the results of various prompts given to the semantic weapons system, all using the manual approach for the stage described in section \ref{convAI}}
+    \label{resultsimgs}
 \end{figure}
+
+The images in figure \ref{resultsimgs}, as well as those featured in figure \ref{testimgs} demonstrate the artistic capabilities of this system\footnote{It is worth noting that the model used for the Description AI when generating the images in figure \ref{resultsimgs} was the cloud based Gemini 3 Pro \parencite{google_gemini_3_pro} for the sake of speed.}. Throughout the various weapons, different shapes, styles and intents can be seen. Where the 1st a bent and curved and clearly designed to appear viscious and scary, the 2nd is meant to be much more simple and careful. The 3rd appeasr clean and new and the 4th shows danger and fear. This shows that, ultimately, the tool is able to generate weapons with creativity that allows for clear differences between weapons and their styles.
+
+However, it is not enough to study these blades in terms of sheer artistic ingenuity. The primary purpose of this syystem was to generate a blade for a given character description, thus these must be analysed in detail.
+
+\subsection{Prompt 1: The Whipsword} \label{restext1}
+
+The input for this can be found in appendix \ref{resPrompt1}, the resulting weapon can be seen in figure \ref{res1}.
+
+The prompt describes the actual weapon itself as having 2 forms, it appears similar to that wielded by Karl Mordo in the film Doctor Strange \parencite{doctor_strange_2016}. However, it appears that the description AI chose to focus upon the "whip" component of this weapon when designing the \gls{ordinal} parameters. The blade itself featues spikes along one side as well as a non-straight shape along the other side of the blade. The guard is curved, seeming to provide basic protections without being overly fanciful, likely due to this intention of this weapon to resemble a whip as well as a sword. 
+
+Ultimately, I feel that the blade matches very well to the description due to its spiked and curved nature as well as its uneven shape along the outer edge of the blade. Thus I would label Prompt 1 as a \textbf{strong success}
+
+\subsection{Prompt 2: The thermal blade} \label{restext2}
+
+The input for this can be found in appendix \ref{resPrompt2}, the resulting weapon can be seed in figure \ref{res2}.
+
+This prompt begins to show a flaw in the implicit surface system, it appears that the outputted image has the blade acting much shorter than the \gls{ordinal} parameters intended. This is an issue that could possibly be resolved by mapping using the Conversion AI system. However, this resulted in the output of figure \ref{res2alt}, which is arguably much further from the intention. At least figure \ref{res2} resulted in a blade which conforms to the simple and minimallistic sillouette style \parencite{sun2024cyberpunk} of cyberpunk settings. As such, I would argue that Prompt 2 represents a \textbf{partial success}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+    \includegraphics[width=0.5\textwidth]{test2alternate.png}
+    \caption{An alternative version of figure \ref{res2} where the \gls{nominal} parameters were generated using Conversion AI and Gemini 3 Pro \parencite{google_gemini_3_pro}}
+    \label{res2alt}
+\end{wrapfigure}
+
+\subsection{Prompt 3: The makeshift cleaver}
+
+The input for this blade can be found in appendix \ref{resPrompt3}, with the resulting weapon visible in figure \ref{res3}.
+
+This blade presents an interesting and positive feature of the AI. Within the prompt, the weapon itself is described as "makeshift" and "crude". However, its functionality is described as "terfiyingly effective at chopping". When looking at the actual generated model, it appears clean and unencombered; even a lack of hand guard suggests a brutal focus on offensive capabilities. This could therefore suggest that the AI is capable of something that a simple algorithm could not perform. It can understand function as well as style and balance these out to create a stronger piece that is able to more accurately contribute to a narrative (as detailed in \cite{lower2024Swords}). As a result, this shows an interesting level of ingenuity that has been introduced by the AI element within the process. As a result I would label this another \textbf{strong success}
+
+\subsection{Prompt 4: The Sunbringer}
+
+This weapon is, in my opinion the least successful. First of all the spikes completely remove any sense of regality that the description makes clear should be present. Secondly, it is incredibly simple despite the number of gems and details that the prompt requests. Ultimately the only redeeming qualities are: the fact that the blade has 1 clean, sharp edge, and the length of the blade is accurate to the prompt. As a result, I would label this attempt as a \textbf{failure}.
 
 \subsection{With a conversion AI} \label{reswith}
 
-\subsection{Without a conversion AI} \label{reswithout}
+It is quite clear that the conversion AI has 2 primary issues. Firstly, it is inherently more unstable. Within the implicit surface, many parameters rely upon each other, or rather, changing 1 introduces limits to another. This creates a sort of dependency loop where all parameters would need to check against all other parameters which is quite difficult to do. Furtheremore, this introduces the issue of priorities. If all parameters are dependent upon all other parameters than the dependencies are also equally dependent upon the original parameter. Imagine you have a parameter A, and by setting it, you introduce certain limits to parameters B and C. However, by setting the parameter B, you also introduce limits on parameters A and C. This ultimately results in an infinite feedback loop, only breakable by declaring one of the parameters as a \textit{priority} which overrides the limits of the others.
 
-\subsection{Local vs Cloud AI}
+The second issue is the abstract nature of the parameters, without full exposure to the entire implicit surface function, the conversion AI has no context to the meaning and purpose of each parameters. Parameter names can only go so far as to inform the \gls{llm} of the purpose and context of the parameter. As a result, the AI can occasionally get confused provide invalid data for individual paramters, such that, in the context of the current AI system, the parameters are invalid. This is why the decision to rely upon manual mapping was chosen.
+
+\begin{figure}[h]
+    \centering
+    \caption{A set of images showing the results of the weapon generator binary when using manually controlled parameters}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{default.png}
+        \caption{An image showing the sword generated with default parameters}
+        \label{test1}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{double.png}
+        \caption{An image showing a double sided cutlass}
+        \label{test2}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{great.png}
+        \caption{An image showing a great sword}
+        \label{test3}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{long.png}
+        \caption{An image showing the sword generated with default parameters except for the length, which is set to "Long"}
+        \label{test4}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{rapier.png}
+        \caption{An image showing a thinner, long blade designed for stabs rather than slashes}
+        \label{test5}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{spike.png}
+        \caption{An image showing a dagger generated with a post-apocalyptic style}
+        \label{test6}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{wide.png}
+        \caption{An image showing a wide, kusurigama based blades}
+        \label{test7}
+    \end{subfigure}
+    \label{testimgs}
+\end{figure}
+
+\pagebreak
 
 \section{Conclusion} \label{conclusion}
 
-% talk about how the next research to be done should involve having the AI generate the implicit surfaces directly.
+The most important point to make here is that AI does certainly have a way of fitting into a 3D production pipeline. However, perhaps not in the direct, mesh editing way that many people invision. I'd imagine that AI would take the place of providing a start point. Rather than starting with a simple cube, we could start with more complex objects and work off of them. However, as was mentioned in section \ref{genAi}, those who will benefit most from these technical advances, interestingly will not be beginners. Those with the strongest knowledge of Computer Graphics will be better equipped to deal with the output of these systems and utilise it to its most effective form.
+
+Ultimately, I would consider this project to be a success. It has been able to show a system which can convert a character description to a 3D model with decent consistency. The next stage of this research would be to build a system which is capable of building the implicit surface function as well, this would open up further adaptablility of this system to other modelling needs.
+
+\pagebreak
 
 \printbibliography
 

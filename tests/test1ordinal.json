@@ -8,6 +8,8 @@
 "handle_material": "Leather",
 "guard_material": "Mithril",
 "guard_coverage": "Complex",
+"guard_plate_shape": "Horseshoe",
+"guard_plate_curvature": 1.0,
 "pommel_material": "Mithril",
 "blade_material": "Mithril",
 "age": 150.0,
