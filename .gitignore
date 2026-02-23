@@ -1,4 +1,12 @@
 /target
 .env
 Cargo.lock
-out.stl
+*.stl
+.hf_cache/
+
+paper/*
+
+!paper/main.tex
+!paper/glossary.tex
+!paper/ref.bib
+!paper/images/

@@ -1,0 +1,498 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[toc, acronym]{glossaries}
+\doublespacing
+\usepackage{wrapfig}
+\usepackage[backend=biber, style=apa, sorting=nyt]{biblatex}
+\addbibresource[]{ref.bib}
+\usepackage{wrapfig}
+\usepackage{subcaption}
+\captionsetup[subfigure]{list=true}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinelanguage{json}{
+    basicstyle=\ttfamily\small,
+    showstringspaces=false,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=8pt,
+    frame=single,
+}
+
+\graphicspath{{./images/}}
+
+\title{Semantic Weaponry}
+\author{Thomas Lower\\
+\textit{Supervised by}\\
+Dr.\\Eike Anderson}
+\date{March 2026}
+
+
+\makeglossaries
+\loadglsentries{glossary}
+
+\begin{document}
+
+\maketitle
+
+\addcontentsline{toc}{section}{Abstract}
+\begin{abstract}
+This project presents a new method of approaching AI assisted 3D content generation by taking advantage of the \gls{semantic} nature of of \glspl{llm} to create a set of parameters which are fed into an implicit surface function, such which can then be remeshed to a useable and adaptable mesh based object for use in other 3D \gls{dcc} applications. This paper will study: the need for such an application, the place for it in the industry and how such a technology can be achieved.
+\end{abstract}
+
+\pagebreak
+
+\section*{Acknowledgements}
+I would like to thank Dr. Eike Anderson for his contributions and guidance in this project.
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\listoffigures
+
+\pagebreak
+
+\printglossaries
+
+\pagebreak
+
+\section{Introduction} \label{intro}
+With the development and popularisation of \gls{llm}, specifically its generative capabilities, many enthusiasts and researchers have studied the possibility of its expansion into the domain of Computer Graphics. This has been explored through many avenues such as: The use of python based vector graphics and HTML where the \gls{llm} generates the code used for this; The generation of bitmap based images based on a \gls{semantic} description; And many have attempted to take advantage of the node-based approach to AI (\gls{neuralnetwork}) in order to allow it to generate 3D models. The latter of which has been found to be the least successful and stable.
+
+\subsection{What is Artificial Intelligence?}
+
+There are multiple ways of understanding the definition of an AI System. The first is a purely ideological standpoint. This approach is largely based upon the work by Alan Turing. Wherein by ``In its strictest definition, AI stands for the imitation by computers of the intelligence inherent in humans'' \parencite{sheikh2023artificial}. Even in 1997, AI was being defined by ``Representations of ``reality,'' cognition, and information'' \parencite{national1997computer}. In this sense AI is any system in which the line between machine and human is blurred, where a person may not be able to tell the difference. There are many issues with this definition however. Firstly, it is based upon the computer-literacy of the user. Somebody who is more familiar with computer systems will be much more likely to be able to spot an AI system than somebody who might lack such skills. Secondly, there is the intention of the algorithm. An algorithm for a chatbot will always be more capable of seeming \textit{human} than a calculator, as the chatbot's goal is to, well, chat, something that has always been quite specific to humans.
+
+There are also more specific versions of this understanding. Concepts such as AI existing to ``capture of the thinking of a recognized expert, especially in the case where the expert is about to be lost.'' \parencite{simmons1988artificial} or the ability for ``learning, reasoning and self-correction'' \parencite{kok2009artificial}. These allow us to determine the definition of an AI based on its features. This however, presents the issue of simulation. The name ``Artificial intelligence'' implies that the machine is innately intelligent, even if artificial. The intelligence is manufactured but is still present, however, there is a question of the system \textit{simulating} this intelligence. If it appears to be acting with intelligence but without actual intelligence, then is it intelligent? Is a simulation of a reality equivalent of said reality? This question poses an issue to these specific, functionality based definitions of AI as it does not provide a clear distinction between \textbf{intelligence} and \textbf{acting intelligent}.
+
+A further way of defining AI could be by its technical design. By associating it with other terms such as ``Expert Systems'' \parencite{simmons1988artificial} or ``Neural Networks'' (the concept of such being explored in \cite{dobrev2012definition}). However, this removes the understanding of an AI outside of the realm of computer science \parencite{abbass2021artificial} and limits it only to this field.
+
+For the purposes of this paper, AI will be defined in the way in which the UK Government explain the phenomenon in \cite{gajjar2023artificial} where ``Artificial Intelligence (AI) technologies are capable of:
+
+\begin{enumerate}
+    \item interpreting, processing and generating realistic human-like speech and text
+    \item interpreting, processing and generating images, videos and other visuals
+    \item independently performing tasks in the real world, such as when they are paired with machinery such as robots
+\end{enumerate}
+''
+
+This definition has been chosen as it is not overly specific to the functionality, without being too abstract that it could include an overwhelming number of concepts. Furthermore, its agreement by the legal background of this country provides confidence in its functionality as a strong definition.
+
+\subsection{Gen AI} \label{genAi}
+
+Generative AI (gen ai) is a specific functionality of artificial intelligence systems in which the system is able transform a textual prompt of \gls{semantic} information into an output with some form of creative simulation. 3 of the biggest use cases of this are: further textual data, programming code and even images or video. For the purposes of this exploration, I first wish to focus upon programming code.
+
+Within the realm of programming, the tools used to code a system have gone through multiple generations of development. Beginning with generation 1 programming language, A.K.A. Machine code. This was the rawest form of creating an intended output, however was too cumbersome and difficult to program with efficiently. Thus, the transition to generation 2 programming languages, nicknamed ``Assembly'' was born. This system would allow those with less education on the subject to make more with less effort, less understanding and less time. Although, at this stage the barrier to entry was still exceptionally high, such that anyone without the education afforded by a specialised institution would not be able to attempt programming.
+
+Due to this, still incredible, barrier to entry, 3rd generation programming languages were created to allow much easier input into computer systems, providing direct and abstract interfaces for lovelacian principles, this made programming much more accessible, such that it was simple enough to allow learning through experience or other methods of self-study. However, this required the simplification and abstraction of many principles within the field. With this switch, it could be described that the focus shifted from \textit{how the computer works} to \textit{how the program works}. This change was then pushed further with the advent of 4th generation languages which focussed on \textit{what the program does} rather than \textit{how the program works}, evidencing further accessibility at the reduction of difficulty and control.
+
+Finally, I propose that the generative AI systems being able to write 3rd generation code could be considered as a 5th generation language. By way that it is an abstraction of language features to provide simplicity and lower the barrier to entry for programming. However, as with all previous generations, the code that is generated by this 5th generation language will never be as efficient as the code that results from languages of a lower generation, it will always be slower and more generic, but at the cost of taking less time to write. This occurred when moving from assembly to a compiled 3rd generation language, and again when moving to AI written code (5th generation).
+
+This progression can be seen in other realms of creation as well. For example computer graphics. Originally, computer graphics were only able to be generated by computer scientists and people with extreme skill and knowledge on the subject. Specialists in computer science with specific training in the subject; it was in its 1st generation state. Afterwards, libraries such as OpenGL, Vulkan, Metal and DirectX could act as an ease of use interface, simulating the 2nd generation. 3rd generation could then be considered the advent of 3D \gls{dcc} tools such as Maya and houdini. These transformed the workflow in a near identical way to how the 3rd generation languages transformed the domain of programming. Furthermore, as with programming languages, an understanding of the programming behind CG (1st and 2nd generation) would give massive benefit towards the use of Maya (the 3rd gen) in the sense that you can optimise things to work better. However, while said optimisations may be essential in the 1st generation, they are perhaps optional in the 3rd.
+
+\subsection{The ``so what''}
+
+As a result of all of this, it makes natural sense that many would seek to allow a form of AI integration with this workflow to bring 3D CG into its own 5th generation. And as with 5th generation programming, it is unrealistic to expect it to be completely stable or provide the most optimised results. This is how we avoid the perceived moral issues with AI replacing human workers \parencite{luccioni2020morality} \parencite{xie2025artificial} \parencite{eng2024will}. When 3rd generation programming languages were introduced, the value of the skills of knowing 2nd and 1st generation languages was not lost, if anything the value of the skill was made more apparent by the fact that most could create an application, but very few could create an \textit{efficient} application. And by such, the programmers with the skill to optimise beyond a 3rd generation language would remain in demand. When 5th generation language began to take over, the value of those who could use 3rd generation language was not lost, simply transformed, they became more valuable assets in comparison to the ``anyone'' who could use a 5th generation language. This is because when the 5th generation language resulted in an issue, only the 3rd gen experts would be able to solve it.
+
+The wish of AI assisted computer graphics is not for the skills of those using Maya and \gls{dcc} tools to become lost souls with no work whom were replaced by AI, rather, their job should become increasingly important and simply take less time as the ``easy parts'' can be done by the 5th generation language, leaving optimisation and bug-fixing to the 3rd generation experts.
+
+\pagebreak
+
+\section{Background} \label{background}
+
+\subsection{Generative AI meets 3D} \label{back1}
+
+\cite{li2023generative}
+
+As I mentioned in section \ref{intro}, the field of Artificial Intelligence has been attempting to combine with 3D computer graphics for some time. This piece discusses the various ways in which Gen AI is being trained, and the types of data being used to train them for this purpose. The most important distinction it makes between data types is the difference between \textbf{structured} and \textbf{non-structured} data. Where structured data includes voxels and multi-view images due to their grid-like representation, and non-structured data includes 3D meshes and point clouds due to their lack of organisation within the structure.
+
+The thing that stands out most to me is how these systems to do not appear to consider some form of intermediary system, they fail to take into account that an \gls{llm} is ultimately a \gls{semantic} system; They would prefer to input text and just get a 3D model without an intermediary system to help the translation. They also seem remarkably generic, focussing on a system that can generate any model. As has been found time and time again in the realm of programming (\cite{mernik2005and}, \cite{negm2019survey}, \cite{hennessy2019new}, \cite{brown2011heterogeneous}, \cite{gerofi2017toward}), specialised systems will always outperform systems designed with no clear purpose in mind, and they will be outperformed in terms of results, speed, energy efficiency and even complexity. As such, an AI system specifically designed to build one type of 3D object (melee weaponry in this case), will be superior to a system that tries to do \textit{everything}.
+
+\subsection{Introduction to implicit surfaces} \label{back2}
+
+\cite{bloomenthal1997introduction}
+
+As is discussed in section \ref{back1}, there are many ways in which computer systems can understand an object in 3D spaces. However, one way which doesn't seem to have been considered is that of an SDF, also known as an implicit surface. In the ``Introduction to implicit surfaces'', we get an exploration in to the basics behind this purely mathematical representation of 3D objects. We are shown that any object can be expressed as a function of a point in space\footnote{It is worth noting, this does not have to be 3D, as the book describes that the point should simply be represented as the point \textit{P} as it can then work in other dimensionalities such as 2D or 5D if necessary.}, where this function equalling 0 is representative of the surface of the object. One of the benefits of this system is that it retains the benefits of a vectorised representation over a bitmap representation of an image in 2D space \parencite{graphics2005vector}. In such, the mesh method of representing a 3D object could be considered comparable to a bitmap due to its lack of infinite scaling possibility. A capacity which is held by implicit surfaces. The other main benefit (especially beneficial for our purposes), is that it can be stored in a purely mathematical format, thus allowing for textual storage and representation of an object.
+
+\subsection{A study of Swords}
+
+\cite{lower2024Swords}
+
+This piece was written by me in an earlier project to study the use of swords and their ability to express or contribute to a narrative. In this I explored the idea that weaponry can be used to contribute directly to a narrative rather than simply being a secondary accessory to such. I felt that weapons are too frequently only able to contribute to a narrative as a tool, something that must be used to add to the story. And as such if they are simply decorative, their existence does not contribute. In a way I wished to show that Chekov's gun could be fired without even being picked up, provided it was handled correctly. This project laid the foundations for \textbf{Semantic Weaponry} as the initial motivation towards developing this technology.
+
+\pagebreak
+
+\section{Implementation} \label{impl}
+
+The intended technology was the implementation of a system which can generate a 3D model of a weapon from the description of a character. This system would originally have 2 distinct stages:
+
+\begin{enumerate}
+    \item Converting the character description to a set of parameters
+    \item Converting the parameters to a 3D object
+\end{enumerate}
+
+My intention was that only item 1 would involve the use of artificial intelligence as I believed that better results could be achieved with a predefined formula for a weapon, especially knowing the basic template of the object being some form of sword. This massively decreases the level of adaptability that the system needs to be capable of performing.
+
+\subsection{Three Staged Approach}
+
+As mentioned in section \ref{impl}, the original intention was to utilise two distinct stages, however, this was under the impression that the system would utilise direct mesh generation / editing. It was only on a further analysis that the use of implicit surfaces became a more effective possibility, which would require a 3rd stage to act as an intermediary between the 2 pre-existant ones. The purpose behind separating these into 3 separate modules in the first place is due to the vast differences in technology that these use. Where the first stage must use some form of \gls{llm}, the middle stage can use ai or be done using a preset list of conversions prepared within the executable binary, and the final stage is simply the execution of an SDF binary which is predetermined to guarantee stability. 
+
+The other purpose of keeping these separate is to enable hot-swapping adaptability. It is noticeable that all 3 processes input and output through standard file types. The Description AI takes in a standard text input and outputs in a JSON file format, a recognised ascii type used all across web data transfer. The Conversion AI inputs and outputs in this same JSON format and the final stage allows for the input of a file or individual values. As a result of this, other alternative methods can be used in place of each of these, such as: alternative models, manual conversion between \gls{ordinal} and \gls{nominal} types, or even other formulas to create different implicit surfaces. This system allows for adaptability to future systems or developments.
+
+\subsubsection{Description AI} \label{descAI}
+
+The first stage of the process is to convert the \gls{semantic} description to a set of \gls{ordinal} parameters. This is stored using a standard JSON format. This is largely dependent upon prompt crafting to have the output be generated in the correct format. The binary created for this project makes use of the \textit{Llama-3.2-1B-Instruct} model \parencite{meta_llama32_2024}, however, for the sake of accessibility for those without access to \gls{tpu} technology, the binary also allows for direct outputting of the prompt to allow the user to copy and paste to other \glspl{llm}.
+
+See appendix \ref{descPrompt} for the full system prompt. The user prompt is not present as this is where the character description is inserted. This prompt was built to provide as much context to the AI as possible without allowing it the possibility of mistaking description with instruction. While the prompt states that the output should only contain the JSON format, some models struggle with this concept. This necessitates human intervention for the output to be correctly formatted.
+
+\subsubsection{Conversion System} \label{convAI}
+
+This is the feature which was determined to be needed after determining that section \ref{weapongenerator} would utilise implicit surfaces rather than meshes. The concept is that there must be some form of conversion between the \gls{ordinal} parameters outputted from the system in section \ref{descPrompt} and the \gls{nominal} data needed for the formula computed in section \ref{weapongenerator}. Two approaches to this system were prepared and tested: one in which the \gls{ordinal} parameters were handed to another \gls{llm} to be mapped to the required \gls{nominal} parameters (see appendix \ref{convPrompt} for full prompt). The other method was manual mapping, where in which each \gls{ordinal} parameter would be mapped to a set of mathematical operations for selected \gls{nominal} parameters such that the default blade is edited to meet the intended input.
+
+After testing both systems, ultimately the manual method was found to be more successful due to stability (more explanation can be found in section \ref{reswith})
+
+\subsubsection{Implicit Surface Generator} \label{weapongenerator}
+
+The final stage in this process is to utilise the \gls{nominal} parameters within a predefined sword formula. This exists in the form of a mathematical function which takes 3 parameters by default: x, y and z. This system is where most of the development time went in, as there is little technological development in the realm of implicit surfaces, largely due to the mathematical requirements of such systems which limits the capacity of most artists to truly express their artistic vision. As such, the formula was written using trial-and-error until a satisfactory base was created.
+
+The sword\footnote{For the purposes of this program, any weapon where the blade protrudes parallel to the handle is considered a sword. Thus, it includes spears and other such items} itself can be thought of as split into three primary components:
+
+\begin{enumerate}
+    \item The handle (a cylinder of variable length, with an optional pommel on the bottom)
+    \item The hand guard (a piece of shaped metal used to separate the handle and blade, protects the wielders hands from harm)
+    \item The blade (a sharpened tool which actually does the cutting, usually encased in a scabbard until use for protection of the bearer)
+\end{enumerate}
+
+All three of these can be customised individually to form many unique patterns for the sword. As such: the blade can be curved or straight, be one sided or two, be long or short and be wide or thin. Within the realm of the guard, there is even greater customisation capability with the shape, curvature, size and other such parameters.
+
+\subsubsection{Remeshing}
+
+While it is not an integral part of the functionality of the program. A concern for many use cases of such a tool would be compatibility with other \gls{dcc} tools, most of which would not have direct support for implicit surface functions. Thus, it is necessary for the accessibility of the program to be able to convert it to a mesh that can be used in any other tool or technology. The most frequently used algorithm for such a \textit{remeshing} task is known as ``Marching Cubes'' \parencite{lorensen1987marching}. This algorithm has issues with preserving sharp edges and details, an extremely important feature for a program for generating swords. Thus a different algorithm with better precision on these sharp details was necessary. Ultimately, an algorithm named ``Manifold Duel Contouring'' was selected instead for its strength with handling sharper details and edges \parencite{schaefer2007manifold}.
+
+\pagebreak
+
+\section{Results} \label{results}
+
+\begin{figure}[h]
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=\linewidth]{test1.png}
+        \caption{Result of prompt \ref{resPrompt1}}
+        \label{res1}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=\linewidth]{test2.png}
+        \caption{Result of prompt \ref{resPrompt2}}
+        \label{res2}
+    \end{subfigure}
+        \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=\linewidth]{test3.png}
+        \caption{Result of prompt \ref{resPrompt3}}
+        \label{res3}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=\linewidth]{test4.png}
+        \caption{Result of prompt \ref{resPrompt4}}
+        \label{res4}
+    \end{subfigure}
+    \caption{A set of images showing the results of various prompts given to the semantic weapons system, all using the manual approach for the stage described in section \ref{convAI}}
+    \label{resultsimgs}
+\end{figure}
+
+The images in figure \ref{resultsimgs}, as well as those featured in figure \ref{testimgs} demonstrate the artistic capabilities of this system\footnote{It is worth noting that the model used for the Description AI when generating the images in figure \ref{resultsimgs} was the cloud based Gemini 3 Pro \parencite{google_gemini_3_pro} for the sake of speed.}. Throughout the various weapons, different shapes, styles and intents can be seen. Where the first a bent and curved and clearly designed to appear vicious and scary, the second is meant to be much more simple and careful. The third appears clean and new and the fourth shows danger and fear. This shows that, ultimately, the tool is able to generate weapons with creativity that allows for clear differences between weapons and their styles.
+
+However, it is not enough to study these blades in terms of sheer artistic ingenuity. The primary purpose of this system was to generate a blade for a given character description, thus these must be analysed in detail.
+
+\subsection{Prompt 1: The Whipsword} \label{restext1}
+
+The input for this can be found in appendix \ref{resPrompt1}, the resulting weapon can be seen in figure \ref{res1}.
+
+The prompt describes the actual weapon itself as having 2 forms, it appears similar to that wielded by Karl Mordo in the film Doctor Strange \parencite{doctor_strange_2016}. However, it appears that the description AI chose to focus upon the ``whip'' component of this weapon when designing the \gls{ordinal} parameters. The blade itself features spikes along one side as well as a non-straight shape along the other side of the blade. The guard is curved, seeming to provide basic protections without being overly fanciful, likely due to this intention of this weapon to resemble a whip as well as a sword. 
+
+Ultimately, I feel that the blade matches very well to the description due to its spiked and curved nature as well as its uneven shape along the outer edge of the blade. Thus I would label Prompt 1 as a \textbf{strong success}
+
+\subsection{Prompt 2: The thermal blade} \label{restext2}
+
+The input for this can be found in appendix \ref{resPrompt2}, the resulting weapon can be seed in figure \ref{res2}.
+
+This prompt begins to show a flaw in the implicit surface system, it appears that the outputted image has the blade acting much shorter than the \gls{ordinal} parameters intended. This is an issue that could possibly be resolved by mapping using the Conversion AI system. However, this resulted in the output of figure \ref{res2alt}, which is arguably much further from the intention. At least figure \ref{res2} resulted in a blade which conforms to the simple and minimalistic silhouette style \parencite{sun2024cyberpunk} of cyberpunk settings. As such, I would argue that Prompt 2 represents a \textbf{partial success}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+    \includegraphics[width=0.5\textwidth]{test2alternate.png}
+    \caption{An alternative version of figure \ref{res2} where the \gls{nominal} parameters were generated using Conversion AI and Gemini 3 Pro \parencite{google_gemini_3_pro}}
+    \label{res2alt}
+\end{wrapfigure}
+
+\subsection{Prompt 3: The makeshift cleaver}
+
+The input for this blade can be found in appendix \ref{resPrompt3}, with the resulting weapon visible in figure \ref{res3}.
+
+This blade presents an interesting and positive feature of the AI. Within the prompt, the weapon itself is described as ``makeshift'' and ``crude''. However, its functionality is described as ``terrifyingly effective at chopping''. When looking at the actual generated model, it appears clean and unencumbered; even a lack of hand guard suggests a brutal focus on offensive capabilities. This could therefore suggest that the AI is capable of something that a simple algorithm could not perform. It can understand function as well as style and balance these out to create a stronger piece that is able to more accurately contribute to a narrative (as detailed in \cite{lower2024Swords}). As a result, this shows an interesting level of ingenuity that has been introduced by the AI element within the process. As a result I would label this another \textbf{strong success}
+
+\subsection{Prompt 4: The Sunbringer}
+
+This weapon is, in my opinion the least successful. First of all the spikes completely remove any sense of regality that the description makes clear should be present. Secondly, it is incredibly simple despite the number of gems and details that the prompt requests. Ultimately the only redeeming qualities are: the fact that the blade has 1 clean, sharp edge, and the length of the blade is accurate to the prompt. As a result, I would label this attempt as a \textbf{failure}.
+
+\subsection{With a conversion AI} \label{reswith}
+
+It is quite clear that the conversion AI has 2 primary issues. Firstly, it is inherently more unstable. Within the implicit surface, many parameters rely upon each other, or rather, changing 1 introduces limits to another. This creates a sort of dependency loop where all parameters would need to check against all other parameters which is quite difficult to do. Furthermore, this introduces the issue of priorities. If all parameters are dependent upon all other parameters than the dependencies are also equally dependent upon the original parameter. Imagine you have a parameter A, and by setting it, you introduce certain limits to parameters B and C. However, by setting the parameter B, you also introduce limits on parameters A and C. This ultimately results in an infinite feedback loop, only breakable by declaring one of the parameters as a \textit{priority} which overrides the limits of the others.
+
+The second issue is the abstract nature of the parameters, without full exposure to the entire implicit surface function, the conversion AI has no context to the meaning and purpose of each parameters. Parameter names can only go so far as to inform the \gls{llm} of the purpose and context of the parameter. As a result, the AI can occasionally get confused provide invalid data for individual parameters, such that, in the context of the current AI system, the parameters are invalid. This is why the decision to rely upon manual mapping was chosen.
+
+\begin{figure}[h]
+    \centering
+    \caption{A set of images showing the results of the weapon generator binary when using manually controlled parameters}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{default.png}
+        \caption{An image showing the sword generated with default parameters}
+        \label{test1}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{double.png}
+        \caption{An image showing a double sided cutlass}
+        \label{test2}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{great.png}
+        \caption{An image showing a great sword}
+        \label{test3}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{long.png}
+        \caption{An image showing the sword generated with default parameters except for the length, which is set to ``Long''}
+        \label{test4}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{rapier.png}
+        \caption{An image showing a thinner, long blade designed for stabs rather than slashes}
+        \label{test5}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{spike.png}
+        \caption{An image showing a dagger generated with a post-apocalyptic style}
+        \label{test6}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{wide.png}
+        \caption{An image showing a wide, kusurigama based blades}
+        \label{test7}
+    \end{subfigure}
+    \label{testimgs}
+\end{figure}
+
+\pagebreak
+
+\section{Conclusion} \label{conclusion}
+
+The most important point to make here is that AI does certainly have a way of fitting into a 3D production pipeline. However, perhaps not in the direct, mesh editing way that many people envision. I'd imagine that AI would take the place of providing a start point. Rather than starting with a simple cube, we could start with more complex objects and work off of them. However, as was mentioned in section \ref{genAi}, those who will benefit most from these technical advances, interestingly will not be beginners. Those with the strongest knowledge of Computer Graphics will be better equipped to deal with the output of these systems and utilise it to its most effective form.
+
+Ultimately, I would consider this project to be a success. It has been able to show a system which can convert a character description to a 3D model with decent consistency. The next stage of this research would be to build a system which is capable of building the implicit surface function as well, this would open up further adaptability of this system to other modelling needs.
+
+\pagebreak
+
+\printbibliography
+
+\appendix
+
+\section{Result prompts} \label{resPrompts}
+
+\subsection{Result prompt 1} \label{resPrompt1}
+
+\lstinputlisting[breaklines=true]{../tests/test1input.txt}
+\lstinputlisting[language=json, breaklines=true]{../tests/test1ordinal.json}
+
+\subsection{Results prompt 2} \label{resPrompt2}
+
+\lstinputlisting[breaklines=true]{../tests/test2input.txt}
+\lstinputlisting[language=json, breaklines=true]{../tests/test2ordinal.json}
+
+\subsection{Results prompt 3} \label{resPrompt3}
+
+\lstinputlisting[breaklines=true]{../tests/test3input.txt}
+\lstinputlisting[language=json, breaklines=true]{../tests/test3ordinal.json}
+
+\subsection{Results prompt 4} \label{resPrompt4}
+
+\lstinputlisting[breaklines=true]{../tests/test4input.txt}
+\lstinputlisting[language=json, breaklines=true]{../tests/test4ordinal.json}
+
+\section{Description Prompt} \label{descPrompt}
+
+\begin{lstlisting}[language=, breaklines=true]
+"<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+You are a weapon design AI. Your goal is to extract the parameters of a weapon based on the user's description of the character. The weapon should fit the characters style, abilities and personality.
+
+Analyse the character's traits. Then, map them to these numerical ranges:
+- blade_length: Short, Medium, Long, Great
+- blade_width: Narrow, Standard, Wide
+- blade_curvature: 0.0-90.0
+- blade_direction: Left, Central, Right
+- blade_count: 1, 2, 4
+- has_guard: true/false
+- handle_material: Wood, Leather, Iron, Steel, Mithril, Titanium, Synthetic, Plant, Cork, Stone, Bone
+- guard_material: Wood, Leather, Iron, Steel, Mithril, Titanium, Synthetic, Plant, Cork, Stone, Bone
+- guard_coverage: Open, Bar, SemiEnclosed, Plate, Shell, Complex, Enclosed
+- pommel_material: Wood, Leather, Iron, Steel, Mithril, Titanium, Synthetic, Plant, Cork, Stone, Bone
+- blade_material: Wood, Leather, Iron, Steel, Mithril, Titanium, Synthetic, Plant, Cork, Stone, Bone
+- age: 0.0-1000.0 (in years)
+- ornamental_level: 0.0-1.0 (0 = plain, 1 = highly ornate)
+- blade_thickness: 0-100
+- period: Neanderthal, Classical, Medieval, Crusador, Colonial, Industrial, SpaceAge, Contemporary, SciFi
+- handle_length: Dagger, OneHanded, TwoHanded, ForearmLength, Polearm
+- blade_type: Sharp, Dull, Serated, Spikey, SpikeyAndSerated
+
+Output Format:
+Output the weapon parameters in JSON format as shown below:
+{
+    ``blade_length'': ``<Short||Medium||Long||Great>'',
+    ``blade_width'': ``<Narrow||Standard||Wide>'',
+    ``blade_curvature'': <number>,
+    ``blade_direction'': ``<Left, Central, Right>'',
+    ``blade_count'': <number>,
+    ``has_guard'': <true||false>,
+    ``handle_material'': ``<Wood||Leather||Iron||Steel||Mithril||Titanium||Synthetic||Plant||Cork||Stone||Bone>'',
+    ``guard_material'': ``<Wood||Leather||Iron||Steel||Mithril||Titanium||Synthetic||Plant||Cork||Stone||Bone>'',
+    ``guard_coverage'': ``<Open||Bar||SemiEnclosed||Plate||Shell||Complex||Enclosed>'',
+    ``pommel_material'': ``<Wood||Leather||Iron||Steel||Mithril||Titanium||Synthetic||Plant||Cork||Stone||Bone>'',
+    ``blade_material'': ``<Wood||Leather||Iron||Steel||Mithril||Titanium||Synthetic||Plant||Cork||Stone||Bone>'',
+    ``age'': <number>,
+    ``ornamental_level'': <number>,
+    ``blade_thickness'': <number>,
+    ``period'': ``<Neanderthal||Classical||Medieval||Crusador||Colonial||Industrial||SpaceAge||Contemporary||SciFi>'',
+    ``handle_length'': ``<Dagger||OneHanded||TwoHanded||ForearmLength||Polearm>'',
+    ``blade_type'': ``<Sharp||Dull||Serated||Spikey||SpikeyAndSerated>''
+}
+
+Ensure the JSON is properly formatted and valid. Do not include any additional text outside of the JSON.<|eot_id|>"
+\end{lstlisting}
+
+\section{Conversion Prompt} \label{convPrompt}
+
+\begin{lstlisting}[language=, breaklines=true]
+"<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+You are a parametric mapping AI. Your goal is to map a set of semantic parameters from the user input containing ordinal data to a set of nominal parameters which are used in an implicit surface algorithm.
+
+Analyse the semantic parameters from the user input, then map their ordianl data to these nominal values:
+- v_mirrored: whether the blade and handle are vertically flipped across the pommel location: true or false, default is false
+- pommel_extension: how far the pommel extends beneath the bottom of the handle: number greater than or equal to 0, default is 2.0
+- pommel_radius: the radius of the pommel: number greater than 0, default is 2.5
+- handle_bottom_limit: how far the handle extends from the guard: number greater than 0, default is 5.5
+- handle_radius: the radius of the handle: number greater than 0, default is 0.5
+- handle_grip_offset: the offset the the grip rings from the central handle: number greater than or equal to 0, default is 0.2
+- handle_grip_y_scale: the grip is made of rings of increasing and decreasing radius and this controls the scale along the handle of each ring: number greater than 1, default is 2.0
+- guard_bottom: how far the hand guard plate extends from the bottom of the blade: number greater than 0, default is 4.0
+- guard_front_stop: how far the hand guard plate extends in the +x direction, 0.1 is closer to the center than 2.0: number greater than or equal to 0, default is 1.0
+- guard_back_stop: how far the hand guard plate extends in the -x direction, 0.1 is closer to the center than 2.0: number greater than or equal to 0, default is 1.0
+- guard_left_stop: how far the hand guard plate extends in the +z direction: number greater than or equal to 0, default is 5.0
+- guard_right_stop: how far the hand guard plate extends in the -z direciton: number greater than or equal to 0, default is 5.0
+- guard_effect_radius: the guard has 4 cynlinders placed at the corners of the plate, these are used as booleans to subtract from the hand guard plate, this is the radius of those cylinders: number greater than or equal to 0, default is 2.0
+- guard_x_offset: x direction distance each boolean cylinder is from the center of the guard: number greater than or equal to 0, default is 2.0
+- guard_x_scale: x direction scale of each boolean cylinder: number greater than or equal to 0, default is 1.0
+- guard_z_offset: z direction distance each boolean cylinder is from the center of the guard: number greater than or equal to 0, default is 2.0
+- guard_z_scale: z direction scale of each boolean cylinder: number greater than or equal to 0, default is 3.0
+- has_guard: whether the weapon has a hand guard plate at the meeting point between the blade and handle: true or false, default is true
+- has_guard_bar: whether the weapon has a bar travelling the length of the handle from the hand guard plate: true or false, default is true
+- guard_bar_back_offset: how far the hand guard bar is from the center of the handle in -x direction: number greater than or equal to 0, default is 0.0
+- guard_bar_front_offset: how far the hand guard bar is from the center of the handle in +x direction: number greater than or equal to 0, default is 0.0
+- guard_bar_left_offset: how far the hand guard bar is from the center of the handle in +z direction: number greater than or eqaul to 0, default is 2.0
+- guard_bar_right_offset: how far the hand guard bar is from the center of the handle in the -z direction: number greater than or eqal to 0, default is 0.0
+- guard_bar_radius: the radius of the hand guard bar: number greater than or equal to 0, default is 0.1
+- guard_bar_curves_back: whether the guard bar should curve back into the handle from the hand guard plate or simply hang from the plate: true or false, default is true
+- guard_bar_bottom_offset: the offset of the end of the guard bar from the pommel: number greater than or equal to 0, default is 1.0
+- guard_bar_x_scale: the x direction scale of the hand guard bar: number greater than or equal to 0, default is 1.0
+- guard_bar_z_scale: the z direction scale of the hand guard bar: number greater than or equal to 0, default is 0.1
+- blade_bottom: the bottom of the blade, technically this is the center of the object: number, default is 15.0
+- blade_radius: the radius of the sphere used for the blade: number greater than 0, default is 5.0
+- blade_front_width: the depth of the blade in +x direction: number greater than 0, default is 1.0
+- blade_back_width: the depth of the blade in -x direction: number greater than 0, default is 1.0
+- blade_left_top_slope: the slope on the left side of the blade causing a point at the top: number greater than 0, default is 2.0
+- blade_right_top_slope: the slope on the right side of the blade causing a point at the top: number greater than 0, default is 2.0
+- blade_scale_front_left_decrement: the slope causing the sharp edge by performing a boolean subtract from the +x +z direction: number, default is 2.0
+- blade_scale_front_right_decrement: the slope causing the sharp edge by performing a boolean subtract from the +x -z direction: number, default is 2.0
+- blade_scale_back_left_decrement: the slope causing the sharp edge by performing a boolean subtract from the -x +z direction: number, default is 2.0
+- blade_scale_back_right_decrement: the slope causing the sharp edge by performing a boolean subtract from the -x -z direction: number, default is 2.0
+- blade_height: how far the blade extends up: number greater than 0, default is 25.0
+- blade_curvature: how much the blade curves: number, negative curves towards -z while positive curves towards +z, default is -20.0
+- blade_lean: how much the blade leans towards left or right: an angle between -90 and 90 where 0 is perfectly straight, default is 0.0
+- blade_serated_left: whether the +z side of the blade is serated: true or false, default is false
+- blade_serated_left_count: the width of the serations along the +z side of the blade: number greater than 0, default is 1.0
+- blade_serated_left_size: the depth of the serations along the +z side of the blade: number greater than 0, default is 2.0
+- blade_serated_right: whether the -z side of the blade is serated: true or false, default is false
+- blade_serated_right_count: the width of the serations along the -z side of the blade: number greater than 0, default is 1.0
+- blade_serated_right_size: the depth of the serations along the -z side of the blade: number greater than 0, default is 2.0
+- blade_spiked_left: whether the +z side of the blade is spiked: true or false, default is false
+- blade_spiked_left_count: the width of the spikes along the +z side of the blade: number greater than 0, default is 1.0
+- blade_spiked_left_size: the length of the spikes along the +z side of the blade: number greater than 0, default is 2.0
+- blade_spiked_right: whether the -z side of the blade is spiked: true or false, default is false
+- blade_spiked_right_count: the width of the spikes along the -z side of the blade: number greater than 0, default is 1.0
+- blade_spiked_right_size: the length of the spikes along the -z side of the blade: number greater than 0, default is 2.0
+
+
+Output Format:
+Output the data in JSON format as shown below:
+{
+    \``v_mirrored\'': true/false,
+    \``pommel_extension\'': value,
+    \``pommel_radius\'': value,
+    \``handle_bottom_limit\'': value,
+    \``handle_radius\'': value,
+    \``handle_grip_offset\'': value,
+    \``handle_grip_y_scale\'': value,
+    \``guard_bottom\'': value,
+    \``guard_front_stop\'': value,
+    \``guard_back_stop\'': value,
+    \``guard_left_stop\'': value,
+    \``guard_right_stop\'': value,
+    \``guard_effect_radius\'': value,
+    \``guard_x_offset\'': value,
+    \``guard_x_scale\'': value,
+    \``guard_z_offset\'': value,
+    \``guard_z_scale\'': value,
+    \``has_guard\'': true/false,
+    \``has_guard_bar\'': true/false,
+    \``guard_bar_back_offset\'': value,
+    \``guard_bar_front_offset\'': value,
+    \``guard_bar_left_offset\'': value,
+    \``guard_bar_right_offset\'': value,
+    \``guard_bar_radius\'': value,
+    \``guard_bar_curves_back\'': true/false,
+    \``guard_bar_bottom_offset\'': value,
+    \``guard_bar_x_scale\'': value,
+    \``guard_bar_z_scale\'': value,
+    \``blade_bottom\'': value,
+    \``blade_radius\'': value,
+    \``blade_front_width\'': value,
+    \``blade_back_width\'': value,
+    \``blade_left_top_slope\'': value,
+    \``blade_right_top_slope\'': value,
+    \``blade_scale_front_left_decrement\'': value,
+    \``blade_scale_front_right_decrement\'': value,
+    \``blade_scale_back_left_decrement\'': value,
+    \``blade_scale_back_right_decrement\'': value,
+    \``blade_serated_left\'': true/false,
+    \``blade_serated_left_count\'': value,
+    \``blade_serated_left_width\'': value,
+    \``blade_serated_right\'': true/false,
+    \``blade_serated_right_count\'': value,
+    \``blade_serated_right_width\'': value,
+    \``blade_spiked_left\'': true/false,
+    \``blade_spiked_left_count\'': value,
+    \``blade_spiked_left_width\'': value,
+    \``blade_spiked_right\'': true/false,
+    \``blade_spiked_right_count\'': value,
+    \``blade_spiked_right_width\'': value,
+    \``blade_height\'': value,
+    \``blade_curvature\'': value,
+    \``blade_lean\'': value
+}
+Ensure the JSON is properly formatted and valid. If a value is not going to be used, enter it as the default parameter. Do not include any additional text outside of the JSON. Include all parameters listed within the JSON format and nothing else. Never introduce keys that are not in the list above, never omit keys, and never wrap the JSON in markdown or prose<|eot_id|>"
+\end{lstlisting}
+
+\end{document}

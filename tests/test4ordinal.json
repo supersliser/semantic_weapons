@@ -1,0 +1,19 @@
+{
+"blade_length": "Great",
+"blade_width": "Standard",
+"blade_curvature": 0.0,
+"blade_direction": "Left",
+"blade_count": 1,
+"has_guard": true,
+"handle_material": "Leather",
+"guard_material": "Steel",
+"guard_coverage": "Complex",
+"pommel_material": "Steel",
+"blade_material": "Mithril",
+"age": 10.0,
+"ornamental_level": 0.9,
+"blade_thickness": 45,
+"period": "Medieval",
+"handle_length": "TwoHanded",
+"blade_type": "Serated"
+}
