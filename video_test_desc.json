@@ -1,0 +1,20 @@
+{
+"blade_length": "Medium",
+"blade_width": "Wide",
+"blade_curvature": 0.0,
+"blade_direction": "Central",
+"blade_count": 2,
+"has_guard": true,
+"handle_material": "Leather",
+"guard_material": "Steel",
+"guard_coverage": "Plate",
+"pommel_material": "Steel",
+"pommel_shape": "Bar",
+"blade_material": "Mithril",
+"age": 45.0,
+"ornamental_level": 0.8,
+"blade_thickness": 85,
+"period": "Medieval",
+"handle_length": "TwoHanded",
+"blade_type": "Dull"
+}
